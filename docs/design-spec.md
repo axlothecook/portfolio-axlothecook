@@ -97,9 +97,18 @@ field. Implement as an on-hover popover near the project row.
 
 ## Colours (from the colour-scheme panel)
 
-- black: `#1e1f1c`, `#34302d`
-- white: `#f3eee5`, `#ececec` (`#f3eee5` = warm cream)
-- The two hero screenshots differ only in which white tint backs the page.
+The panel gave TWO values for each of black and white — these are A/B test
+pairs (the two Welcome screenshots were testing which pair to use).
+
+- black pair: `#1e1f1c`, `#34302d`
+- white pair: `#f3eee5` (warm cream), `#ececec` (neutral)
+
+**Chosen starting palette (build with these):**
+
+- **Background:** `#ececec`
+- **Text (ink):** `#34302d` — but built so it can be EASILY switched to
+  `#1e1f1c` (single CSS custom property `--color-ink`).
+- **Navbar background:** `#d9d9d9` (slightly darker than the page bg).
 
 ## Not part of the design
 
