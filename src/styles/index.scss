@@ -1,0 +1,12 @@
+// Portfolio custom styles entry.
+//
+// Per the axlothecook-sass-library README: override the library's SCSS
+// variables ($primary, $base-padding, $base-font-size, the $colors map, etc.)
+// HERE, ABOVE the @import, then import the library so the overrides take effect.
+//
+// Design tokens (colours, spacing, fonts) from the Figma file will be filled
+// in here once the panels are available.
+
+// --- variable overrides go above this line ---
+
+@import 'axlothecook-sass-library/sass-library/index.scss';
