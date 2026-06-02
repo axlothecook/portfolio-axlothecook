@@ -1,17 +1,49 @@
 // Portfolio custom styles entry.
 //
 // Per the axlothecook-sass-library README: override the library's SCSS
-// variables ($primary, $base-padding, $base-font-size, the $colors map, etc.)
-// HERE, ABOVE the @import, then import the library so the overrides take effect.
-//
-// Design tokens (colours, spacing, fonts) from the Figma file will be filled
-// in here once the panels are available.
-//
-// Colour scheme (from Figma "color scheme testing ground" panel) — NOT wired
-// in yet, recorded for when we build the theme:
-//   black: #1e1f1c, #34302d   (dark pair)
-//   white: #f3eee5, #ececec   (light / off-white pair; #f3eee5 is warm cream)
+// variables ($primary, $base-padding, $text, the $colors map, etc.) HERE,
+// ABOVE the @import, then import the library so the overrides take effect.
 
-// --- variable overrides go above this line ---
+// ---------------------------------------------------------------------------
+// Library variable overrides (must come BEFORE the @import).
+// These feed the library's base styles + generated colour utilities.
+// ---------------------------------------------------------------------------
+$light-bg-primary: #ececec; // page background
+$text: #34302d; // ink (body text)
 
 @import 'axlothecook-sass-library/sass-library/index.scss';
+
+// ---------------------------------------------------------------------------
+// Palette as CSS custom properties — the single control panel for the theme.
+//
+// Colour scheme came from the Figma "colour scheme testing ground" panel as
+// A/B pairs; the chosen starting set is below.
+//   black pair: #1e1f1c, #34302d   white pair: #f3eee5 (cream), #ececec
+//
+// To switch the text colour from soft black to hard black, change ONE line:
+//   --color-ink: var(--color-ink-hard);
+// ---------------------------------------------------------------------------
+:root {
+  --color-bg: #ececec; // page background (chosen)
+  --color-navbar: #d9d9d9; // navbar background (slightly darker than bg)
+
+  --color-ink-soft: #34302d; // soft black
+  --color-ink-hard: #1e1f1c; // hard black (alternative)
+  --color-ink: var(--color-ink-soft); // active text colour — swap to -hard to switch
+
+  --color-cream: #f3eee5; // warm-cream white (alternative bg, kept for later)
+}
+
+// ---------------------------------------------------------------------------
+// Base
+// ---------------------------------------------------------------------------
+html,
+body {
+  height: 100%;
+}
+
+body {
+  margin: 0;
+  background-color: var(--color-bg);
+  color: var(--color-ink);
+}
