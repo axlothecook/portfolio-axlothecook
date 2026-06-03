@@ -1,27 +1,26 @@
 <script lang="ts">
-  // Theme verification view. The fixed shell + slides come on later branches.
+  import Shell from './lib/Shell.svelte'
+  // Slides come on the feat/slides branch; for now a placeholder fills the slot.
 </script>
 
-<main>
-  <h1>portfolio-axlothecook</h1>
-  <p>Theme: background #ececec, ink #34302d (switchable to #1e1f1c), navbar #d9d9d9.</p>
-  <div class="navbar-sample">navbar bg sample (#d9d9d9)</div>
-</main>
+<Shell>
+  <div class="placeholder">
+    <h1>Welcome</h1>
+    <p>To a place where projects of passion reside</p>
+  </div>
+</Shell>
 
 <style lang="scss">
-  main {
-    min-height: 100vh;
-    display: flex;
-    flex-direction: column;
-    gap: 1rem;
-    align-items: center;
-    justify-content: center;
-    padding: 2rem;
-  }
+  .placeholder {
+    h1 {
+      font-size: 4rem;
+      font-weight: 300;
+      margin: 0;
+    }
 
-  .navbar-sample {
-    background-color: var(--color-navbar);
-    padding: 0.75rem 1.5rem;
-    border-radius: 999px;
+    p {
+      margin: 0.5rem 0 0;
+      opacity: 0.8;
+    }
   }
 </style>

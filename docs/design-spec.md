@@ -23,11 +23,22 @@ page does not move.
   swapping content block.
 - **Bottom-center:** a small position label / nav indicator (Top / Middle /
   Bottom — see ordering below).
+- **Left edge:** a thin **full-height vertical bar** in `#34302d`, top to
+  bottom, on the far left of every panel.
 - **Bottom-right motif:** a few thin **vertical sticks of varying height, each
   topped with a dot**.
   - The dot on the **tallest** stick **slowly bobs up and down** (looping).
   - On the non-Welcome slides the sticks **lower and grow** so they sit out of
     the way of the text (a "lowering + growing" animation on slide change).
+
+## Build decisions
+
+- `+` mark and `⋮` dots: built with **pure CSS/HTML** (no image assets), so
+  they stay crisp and are easy to animate later.
+- Bottom-center indicator (Top/Middle/Bottom): **just a position label**, not
+  clickable. Scroll drives navigation.
+- Layout: **desktop-first** now (match the Figma); mobile breakpoints are a
+  later task (no Figma mobile panels yet).
 
 ## Slides (center panel content)
 
@@ -89,8 +100,22 @@ field. Implement as an on-hover popover near the project row.
 
 ## Animations summary
 
-- `+` mark: continuous spin (loop).
-- Tallest bottom-right dot: slow up/down bob (loop).
+- `+` mark: TODO restyle — current build is a plain thin cross; the Figma `+`
+  has **thicker legs with rounded edges**. Polish the look later.
+- `+` mark: continuous spin (loop). Clearance vs the left bar VERIFIED by a
+  temporary spin test — at `left: 3.75rem`, size 48px, it clears the 20px bar.
+  Speed pattern (slow→fast→slow over ~3s) does not affect clearance.
+- Bottom-right dots: a **real ball-drop bounce**, ALL THREE dots (not just the
+  tallest). Final previewed motion (CSS, to be rebuilt in GSAP):
+  - Each dot: launch up decelerating to an apex of **−46px**, then a fast fall
+    that accelerates into the tower top, bounce, repeat. Cycle ~**1.4s**.
+  - Timing split ~**62% rise / 38% fall** (apex at 62%). Rise ease
+    `cubic-bezier(0.15,0.6,0.35,1)`; fall ease `cubic-bezier(0.7,0,0.9,0.3)`.
+  - **All balls share the exact same fall** (identical accel) — the ONLY
+    per-ball difference is WHEN each launches (stagger via delay: tall=0s,
+    left=0.5s, right=0.9s).
+  - Temporary CSS preview lives in `Sticks.svelte` (`.bob` + `temp-ball-drop`)
+    and MUST be removed before feat/layout-shell merges.
 - Bottom-right sticks: lower + grow when leaving the Welcome slide.
 - Center text: **show / disappear transition** when the slide content changes
   (going between slides).
