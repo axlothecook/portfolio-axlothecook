@@ -40,6 +40,39 @@ page does not move.
 - Layout: **desktop-first** now (match the Figma); mobile breakpoints are a
   later task (no Figma mobile panels yet).
 
+## Scroll mechanic + slide layout (decided)
+
+- **Scroll-snap**: real full-height scroll sections under the fixed shell; wheel
+  (desktop) and finger-swipe (phone) move through the centre content
+  Welcome → Projects → Skills → About. CSS scroll-snap + IntersectionObserver
+  tracks the active slide (drives the indicator + later animations).
+- **Shared slide template**: big left-side title + content to the right of the
+  divider, for all 4 slides (Welcome is the hero variant).
+- **Projects overflow**: the project list may be long. The content box scrolls
+  only IF it overflows (`overflow-y: auto`); nested-scroll handoff means you
+  scroll the list first, then continued scrolling snaps to the next slide. The
+  current 6 projects likely fit without inner scroll.
+- **Welcome load animation**: the Welcome text animates in on page load (built
+  in feat/slides per the user).
+
+## Slide transition + indicator details (decided 2026-06-04)
+
+- **Slide text transition**: outgoing text moves UP and fades out as the next
+  slide arrives; incoming text rises from below and fades in. Equal timing
+  (GSAP, ~0.8s to start). Fade-only was tried first; movement added per user.
+- **Center divider**: lives in the FIXED SHELL (not per-slide), so it never
+  moves or fades. Made thicker.
+- **Bottom indicator (Top/Middle/Bottom)** — line position differs PER WORD
+  (from Figma): Top → line ABOVE the word; Middle → lines on LEFT and RIGHT of
+  the word; Bottom → line BELOW the word. The word AND its line(s) fade out/in
+  slowly in sync with the slide transition.
+- **Welcome slide**: title slightly THICKER; widen the right-side tagline
+  container so it stops wrapping into many rows.
+- **Skills slide**: right-side content scrollable on overflow (like Projects).
+- **Scroll hint**: a cursor SVG + "Scroll" text (Figma skills template). Fades
+  in/out slowly on a loop to invite scrolling; shown on overflowing slides
+  (Projects/Skills) and stops once the user scrolls that slide's content.
+
 ## Slides (center panel content)
 
 1. **Welcome** (hero): big "Welcome" + divider + "To a place where projects of

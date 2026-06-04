@@ -32,6 +32,9 @@ $text: #34302d; // ink (body text)
   --color-ink: var(--color-ink-soft); // active text colour — swap to -hard to switch
 
   --color-cream: #f3eee5; // warm-cream white (alternative bg, kept for later)
+
+  // Active font = Manrope. Backup candidate = 'Space Grotesk' (swap to compare).
+  --font-primary: 'Manrope', system-ui, sans-serif;
 }
 
 // ---------------------------------------------------------------------------
@@ -46,4 +49,5 @@ body {
   margin: 0;
   background-color: var(--color-bg);
   color: var(--color-ink);
+  font-family: var(--font-primary);
 }

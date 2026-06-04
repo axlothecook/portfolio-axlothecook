@@ -1,19 +1,31 @@
 <script lang="ts">
-  // The fixed shell: stays on screen across all slides. Slide content is
-  // rendered into the center region via the default <slot />.
-  // The bottom-center indicator is still a placeholder — it shows the active
-  // slide position, so it gets wired up in feat/slides.
+  // The fixed shell: stays on screen across all slides. The scrolling slides
+  // are passed in as children. The bottom-centre indicator shows the active
+  // slide's position label, passed via the `indicator` prop.
   import Toggle from './Toggle.svelte'
   import Sticks from './Sticks.svelte'
+  import Indicator from './Indicator.svelte'
+
+  // The bottom-centre indicator shows the active slide's position label
+  // (Welcome has no label; Projects=Top, Skills=Middle, About=Bottom).
+  interface Props {
+    indicator?: string
+    indicatorEl?: HTMLElement // bound out so App can drive its fade via GSAP
+    children?: import('svelte').Snippet
+  }
+  let { indicator = '', indicatorEl = $bindable(), children }: Props = $props()
 </script>
 
 <div class="shell">
   <!-- thin full-height bar down the far-left edge (#34302d) -->
   <div class="left-bar"></div>
 
+  <!-- fixed centre divider: static across all slides, never animates -->
+  <div class="center-divider"></div>
+
   <!-- corners + edges (fixed to the viewport) -->
   <div class="region top-left">
-    <span class="plus"></span>
+    <svg class="plus" viewBox="0 0 20 20" aria-hidden="true"><use href="#icon-plus" /></svg>
     <span class="dots">
       <span class="dot"></span>
       <span class="dot"></span>
@@ -28,16 +40,13 @@
       <span class="dot"></span>
     </span>
   </div>
-  <div class="region bottom-center">[indicator]</div>
+  <div class="region bottom-center" bind:this={indicatorEl}>
+    <Indicator label={indicator} />
+  </div>
   <div class="region bottom-right"><Sticks /></div>
 
-  <!-- center: vertical divider + slide content -->
-  <div class="center">
-    <div class="divider"></div>
-    <div class="slot">
-      <slot />
-    </div>
-  </div>
+  <!-- the scrolling slides fill the centre (each slide owns its own divider) -->
+  {@render children?.()}
 </div>
 
 <style lang="scss">
@@ -46,6 +55,18 @@
     min-height: 100vh;
     width: 100%;
     overflow: hidden;
+  }
+
+  // Fixed centre divider — static across all slides, thicker than before.
+  .center-divider {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 4px;
+    height: 18rem;
+    background-color: var(--color-ink);
+    z-index: 1;
   }
 
   // Thin full-height bar on the far-left edge (always #34302d, independent of
@@ -64,11 +85,6 @@
     font-size: 0.85rem;
   }
 
-  // Placeholder-only regions still get dimmed until their real content lands.
-  .bottom-center {
-    opacity: 0.5;
-  }
-
   .top-left {
     top: 2rem;
     left: 3.75rem;
@@ -78,23 +94,11 @@
     gap: 0.6rem;
   }
 
-  // The "+" mark: a vertical bar with a horizontal crossbar pseudo-element.
+  // The "+" mark (SVG with rounded/thick legs). Will spin in feat/animations.
   .plus {
-    position: relative;
-    width: 6px;
+    width: 48px;
     height: 48px;
-    background-color: var(--color-ink);
-
-    &::after {
-      content: '';
-      position: absolute;
-      top: 50%;
-      left: 50%;
-      transform: translate(-50%, -50%);
-      width: 48px;
-      height: 6px;
-      background-color: var(--color-ink);
-    }
+    color: var(--color-ink);
   }
 
   // The "⋮" mark: three stacked dots.
@@ -124,36 +128,14 @@
   }
 
   .bottom-center {
-    bottom: 1.5rem;
+    bottom: 4rem; // higher up, off the very bottom
     left: 50%;
     transform: translateX(-50%);
   }
 
+
   .bottom-right {
     bottom: 0;
     right: 10rem;
-  }
-
-  // Center region: divider sits left of the slide content, both pushed toward
-  // the right half of the screen (as in the Figma).
-  .center {
-    min-height: 100vh;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    gap: 2rem;
-    padding-left: 50%; // content lives in the right half
-  }
-
-  .divider {
-    width: 2px;
-    align-self: stretch;
-    max-height: 18rem;
-    margin: auto 0;
-    background-color: var(--color-ink);
-  }
-
-  .slot {
-    flex: 1;
   }
 </style>
