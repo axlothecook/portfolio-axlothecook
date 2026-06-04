@@ -20,9 +20,9 @@
     padding: 0;
     display: flex;
     flex-direction: column;
-    gap: 1.1rem;
-    font-size: 1.5rem;
+    gap: 1rem; // matches About slide row gap (shared standard)
+    font-size: 1.4rem; // matches About
     font-weight: 300;
-    line-height: 1.4;
+    line-height: 1.2; // enough for wrapping skill lines without inflating row gap
   }
 </style>

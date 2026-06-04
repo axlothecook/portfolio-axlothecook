@@ -4,19 +4,24 @@
   // slide's position label, passed via the `indicator` prop.
   import Toggle from './Toggle.svelte'
   import Sticks from './Sticks.svelte'
+  import Indicator from './Indicator.svelte'
 
   // The bottom-centre indicator shows the active slide's position label
   // (Welcome has no label; Projects=Top, Skills=Middle, About=Bottom).
   interface Props {
     indicator?: string
+    indicatorEl?: HTMLElement // bound out so App can drive its fade via GSAP
     children?: import('svelte').Snippet
   }
-  let { indicator = '', children }: Props = $props()
+  let { indicator = '', indicatorEl = $bindable(), children }: Props = $props()
 </script>
 
 <div class="shell">
   <!-- thin full-height bar down the far-left edge (#34302d) -->
   <div class="left-bar"></div>
+
+  <!-- fixed centre divider: static across all slides, never animates -->
+  <div class="center-divider"></div>
 
   <!-- corners + edges (fixed to the viewport) -->
   <div class="region top-left">
@@ -35,11 +40,9 @@
       <span class="dot"></span>
     </span>
   </div>
-  {#if indicator}
-    <div class="region bottom-center">
-      <span class="indicator-label">{indicator}</span>
-    </div>
-  {/if}
+  <div class="region bottom-center" bind:this={indicatorEl}>
+    <Indicator label={indicator} />
+  </div>
   <div class="region bottom-right"><Sticks /></div>
 
   <!-- the scrolling slides fill the centre (each slide owns its own divider) -->
@@ -52,6 +55,18 @@
     min-height: 100vh;
     width: 100%;
     overflow: hidden;
+  }
+
+  // Fixed centre divider — static across all slides, thicker than before.
+  .center-divider {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 4px;
+    height: 18rem;
+    background-color: var(--color-ink);
+    z-index: 1;
   }
 
   // Thin full-height bar on the far-left edge (always #34302d, independent of
@@ -118,24 +133,6 @@
     transform: translateX(-50%);
   }
 
-  // Bottom indicator: bigger, bolder, with an underline beneath it.
-  .indicator-label {
-    position: relative;
-    font-size: 1.25rem;
-    font-weight: 600;
-    letter-spacing: 0.02em;
-    padding-bottom: 0.35rem;
-
-    &::after {
-      content: '';
-      position: absolute;
-      left: 0;
-      right: 0;
-      bottom: 0;
-      height: 2px;
-      background-color: var(--color-ink);
-    }
-  }
 
   .bottom-right {
     bottom: 0;

@@ -24,15 +24,16 @@
     padding: 0;
     display: flex;
     flex-direction: column;
-    gap: 0.6rem;
+    gap: 1rem; // matches About slide row gap (shared standard)
   }
 
   .project {
     display: flex;
     align-items: center;
     gap: 0.5rem;
-    font-size: 1.5rem;
+    font-size: 1.4rem; // matches Skills/About (shared standard)
     font-weight: 300;
+    line-height: 1.2;
   }
 
   .ongoing {

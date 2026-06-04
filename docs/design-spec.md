@@ -55,6 +55,24 @@ page does not move.
 - **Welcome load animation**: the Welcome text animates in on page load (built
   in feat/slides per the user).
 
+## Slide transition + indicator details (decided 2026-06-04)
+
+- **Slide text transition**: outgoing text moves UP and fades out as the next
+  slide arrives; incoming text rises from below and fades in. Equal timing
+  (GSAP, ~0.8s to start). Fade-only was tried first; movement added per user.
+- **Center divider**: lives in the FIXED SHELL (not per-slide), so it never
+  moves or fades. Made thicker.
+- **Bottom indicator (Top/Middle/Bottom)** — line position differs PER WORD
+  (from Figma): Top → line ABOVE the word; Middle → lines on LEFT and RIGHT of
+  the word; Bottom → line BELOW the word. The word AND its line(s) fade out/in
+  slowly in sync with the slide transition.
+- **Welcome slide**: title slightly THICKER; widen the right-side tagline
+  container so it stops wrapping into many rows.
+- **Skills slide**: right-side content scrollable on overflow (like Projects).
+- **Scroll hint**: a cursor SVG + "Scroll" text (Figma skills template). Fades
+  in/out slowly on a loop to invite scrolling; shown on overflowing slides
+  (Projects/Skills) and stops once the user scrolls that slide's content.
+
 ## Slides (center panel content)
 
 1. **Welcome** (hero): big "Welcome" + divider + "To a place where projects of
