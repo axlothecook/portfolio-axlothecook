@@ -3,7 +3,7 @@
   import { skills } from '../../data/skills'
 </script>
 
-<Slide title="Skills & Tools">
+<Slide title="Skills & Tools" scrollable>
   <ul class="list">
     {#each skills as group}
       <li class="line">

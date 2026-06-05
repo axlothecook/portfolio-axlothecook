@@ -64,7 +64,7 @@
     left: 50%;
     transform: translate(-50%, -50%);
     width: 4px;
-    height: 18rem;
+    height: var(--divider-height);
     background-color: var(--color-ink);
     z-index: 1;
   }

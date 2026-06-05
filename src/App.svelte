@@ -94,9 +94,25 @@
   }
 
   function onWheel(e: WheelEvent) {
-    e.preventDefault()
     if (Math.abs(e.deltaY) < 10) return
-    go(e.deltaY > 0 ? 1 : -1)
+    const dir = e.deltaY > 0 ? 1 : -1
+
+    // If the wheel is over a scrollable content area that can still scroll in
+    // this direction, let it scroll the list instead of changing slides.
+    const scroller = (e.target as HTMLElement)?.closest?.('.content.scrollable') as
+      | HTMLElement
+      | null
+    if (scroller) {
+      const atTop = scroller.scrollTop <= 0
+      const atBottom =
+        scroller.scrollTop + scroller.clientHeight >= scroller.scrollHeight - 1
+      const canScroll = dir > 0 ? !atBottom : !atTop
+      if (canScroll) return // let the browser scroll the content natively
+    }
+
+    // Otherwise change slides.
+    e.preventDefault()
+    go(dir)
   }
 
   function onKey(e: KeyboardEvent) {

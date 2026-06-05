@@ -63,3 +63,8 @@ export const projects: Project[] = [
     ongoing: true,
   },
 ]
+
+// TEMPORARY: duplicate the list so it overflows and the scroll behaviour is
+// testable before real data exists. REMOVE this block once there are enough
+// real projects.
+projects.push(...projects.map((p) => ({ ...p })))

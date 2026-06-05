@@ -15,3 +15,7 @@ export const skills: SkillGroup[] = [
   { label: 'WebGL', items: 'Three.js' },
   { label: 'Animation', items: 'GSAP' },
 ]
+
+// TEMPORARY: duplicate so the list overflows and the scroll behaviour is
+// testable before real data exists. REMOVE once there are enough real skills.
+skills.push(...skills.map((s) => ({ ...s })), ...skills.map((s) => ({ ...s })))
