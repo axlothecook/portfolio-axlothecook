@@ -13,6 +13,18 @@
     />
   </symbol>
 
+  <symbol
+    fill="none"
+    stroke="currentColor"
+    stroke-width="2"
+    stroke-linecap="round"
+    stroke-linejoin="round"
+    viewBox="0 0 24 24"
+    id="icon-cursor"
+  >
+    <path d="M4 4l7.07 17 2.51-7.39L21 11.07z" />
+  </symbol>
+
   <symbol fill="none" viewBox="0 0 24 24" id="icon-location">
     <path
       fill-rule="evenodd"

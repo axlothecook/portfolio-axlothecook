@@ -69,9 +69,12 @@ page does not move.
 - **Welcome slide**: title slightly THICKER; widen the right-side tagline
   container so it stops wrapping into many rows.
 - **Skills slide**: right-side content scrollable on overflow (like Projects).
-- **Scroll hint**: a cursor SVG + "Scroll" text (Figma skills template). Fades
-  in/out slowly on a loop to invite scrolling; shown on overflowing slides
-  (Projects/Skills) and stops once the user scrolls that slide's content.
+- **Scroll hint**: a cursor SVG + "Scroll" text (Figma skills template). BUILT.
+  The whole hint fades in/out on a loop; the cursor additionally glides DOWN to
+  demonstrate the scroll/drag gesture, then resets. Shown ONLY when a slide's
+  content overflows (`scrollHeight > clientHeight + 12px` tolerance) and hidden
+  once the user scrolls that content. NOTE: with the current short lists nothing
+  overflows, so the hint won't appear until real data grows Projects/Skills.
 
 ## Slides (center panel content)
 
