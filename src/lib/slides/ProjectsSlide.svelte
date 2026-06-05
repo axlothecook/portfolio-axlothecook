@@ -3,7 +3,7 @@
   import { projects } from '../../data/projects'
 </script>
 
-<Slide title="Projects">
+<Slide title="Projects" scrollable>
   <ul class="list">
     {#each projects as project}
       <li class="project">

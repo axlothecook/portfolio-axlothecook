@@ -35,6 +35,9 @@ $text: #34302d; // ink (body text)
 
   // Active font = Manrope. Backup candidate = 'Space Grotesk' (swap to compare).
   --font-primary: 'Manrope', system-ui, sans-serif;
+
+  // Height of the centre divider line; scrollable content is 5px shorter.
+  --divider-height: 18rem;
 }
 
 // ---------------------------------------------------------------------------
@@ -50,4 +53,35 @@ body {
   background-color: var(--color-bg);
   color: var(--color-ink);
   font-family: var(--font-primary);
+}
+
+// ---------------------------------------------------------------------------
+// Scrollbar for the data slides' scrollable content. Global (not component-
+// scoped) because ::-webkit-scrollbar pseudo-elements don't apply reliably
+// under Svelte's scoped CSS. Thin, no arrow buttons, ink-coloured, and the
+// thumb is invisible until the user has scrolled (the `scrolled` class).
+// ---------------------------------------------------------------------------
+.content.scrollable {
+  &::-webkit-scrollbar {
+    width: 4px;
+  }
+
+  &::-webkit-scrollbar-button {
+    display: none;
+    width: 0;
+    height: 0;
+  }
+
+  &::-webkit-scrollbar-track {
+    background: transparent;
+  }
+
+  &::-webkit-scrollbar-thumb {
+    background-color: transparent; // hidden until scrolled
+    border-radius: 2px;
+  }
+
+  &.scrolled::-webkit-scrollbar-thumb {
+    background-color: var(--color-ink);
+  }
 }

@@ -14,9 +14,10 @@
   interface Props {
     title: string
     hero?: boolean // the Welcome slide uses an extra-large title
+    scrollable?: boolean // data slides scroll on overflow; Welcome does not
     children?: import('svelte').Snippet
   }
-  let { title, hero = false, children }: Props = $props()
+  let { title, hero = false, scrollable = false, children }: Props = $props()
 
   let contentEl: HTMLElement | undefined = $state()
   let overflows = $state(false)
@@ -25,8 +26,10 @@
   const showHint = $derived(overflows && !hasScrolled)
 
   function checkOverflow() {
-    // tolerance avoids false positives from sub-pixel/line-box rounding
-    if (contentEl) overflows = contentEl.scrollHeight > contentEl.clientHeight + 12
+    // only scrollable slides can overflow (Welcome never scrolls). Tolerance
+    // avoids false positives from sub-pixel/line-box rounding.
+    if (scrollable && contentEl)
+      overflows = contentEl.scrollHeight > contentEl.clientHeight + 12
   }
 
   function onContentScroll() {
@@ -34,10 +37,17 @@
   }
 
   onMount(() => {
-    // wait a tick so content has rendered before measuring overflow
-    tick().then(checkOverflow)
+    // A ResizeObserver re-checks whenever the content's box changes — including
+    // when the slide first becomes visible and lays out at its real height
+    // (a one-time onMount check can run while the panel is still hidden).
+    const ro = new ResizeObserver(checkOverflow)
+    if (contentEl) ro.observe(contentEl)
     window.addEventListener('resize', checkOverflow)
-    return () => window.removeEventListener('resize', checkOverflow)
+    tick().then(checkOverflow)
+    return () => {
+      ro.disconnect()
+      window.removeEventListener('resize', checkOverflow)
+    }
   })
 </script>
 
@@ -46,7 +56,13 @@
     <h2 class="title slide-text" class:hero>{title}</h2>
     <div class="spacer"></div>
     <div class="content-col">
-      <div class="content slide-text" bind:this={contentEl} onscroll={onContentScroll}>
+      <div
+        class="content slide-text"
+        class:scrollable
+        class:scrolled={hasScrolled}
+        bind:this={contentEl}
+        onscroll={onContentScroll}
+      >
         {@render children?.()}
       </div>
       <div class="hint-slot">
@@ -94,30 +110,40 @@
   // Empty column occupying the fixed divider's footprint.
   .spacer {
     width: 4px;
-    height: 18rem;
+    height: var(--divider-height);
   }
 
   // content + scroll-hint side by side (hint to the right of the content).
+  // The column is a FIXED width so the content box and the hint sit in the SAME
+  // place on every slide — switching slides doesn't move them. The content
+  // takes the available space; the hint sits at the column's right edge.
   .content-col {
     display: flex;
     align-items: center;
     gap: 2rem;
+    width: 42rem;
   }
 
   .content {
     // gap from the divider so text never touches/crosses the line
     padding-left: 1.5rem;
     padding-right: 1rem;
-    max-width: 34rem;
-    max-height: 70vh;
-    overflow-y: auto; // scrolls only if content is taller than this
+    flex: 1;
+    min-width: 0; // allow the content to shrink so the hint always fits
+  }
 
-    // Hide the scrollbar visually (the design has none); scroll still works.
-    scrollbar-width: none;
-
-    &::-webkit-scrollbar {
-      display: none;
-    }
+  // Only data slides scroll. Welcome (non-scrollable) never overflows.
+  // The thin, arrow-less scrollbar styling lives in the GLOBAL stylesheet
+  // (src/styles/index.scss) because ::-webkit-scrollbar pseudo-elements don't
+  // work reliably under Svelte's component-scoped CSS.
+  .content.scrollable {
+    box-sizing: border-box;
+    // 27px shorter than the centre divider line
+    height: calc(var(--divider-height) - 27px);
+    overflow-y: auto;
+    // symmetric vertical padding so the first and last visible rows sit equally
+    // far from the top and bottom of the box
+    padding-block: 10px;
   }
 
   // reserves no space when empty; the hint shows only on overflow
