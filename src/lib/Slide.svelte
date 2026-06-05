@@ -53,8 +53,13 @@
 
 <section class="slide">
   <div class="grid">
-    <h2 class="title slide-text" class:hero>{title}</h2>
+    <!-- title sits in a right-clipped mask so it can slide out from behind the
+         divider on load (mask only active while .grid has the .loading class) -->
+    <div class="title-mask">
+      <h2 class="title slide-text" class:hero>{title}</h2>
+    </div>
     <div class="spacer"></div>
+    <!-- content sits in a left-clipped mask for the same reason -->
     <div class="content-col">
       <div
         class="content slide-text"
@@ -89,8 +94,13 @@
     width: 100%;
   }
 
-  .title {
+  // Mask wrapper around the title; its right edge sits at the divider.
+  .title-mask {
     justify-self: end;
+    overflow: visible; // becomes hidden during the load animation (.loading)
+  }
+
+  .title {
     text-align: right;
     // gap between the title and the divider
     padding-right: 3rem;
@@ -122,6 +132,14 @@
     align-items: center;
     gap: 2rem;
     width: 42rem;
+  }
+
+  // During the load animation, the title + content masks clip at the divider so
+  // the text genuinely emerges from behind the line. `.loading` is toggled by App
+  // at runtime, so it's wrapped in :global() to stop Svelte pruning these rules.
+  :global(.grid.loading) .title-mask,
+  :global(.grid.loading) .content-col {
+    overflow: hidden;
   }
 
   .content {

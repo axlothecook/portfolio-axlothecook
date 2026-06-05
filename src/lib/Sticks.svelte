@@ -41,12 +41,13 @@
     height: 11px;
     border-radius: 50%;
     background-color: var(--color-ink);
-    margin-bottom: 0.6rem;
+    // no gap — the dot rests ON the stick top so it has a surface to bounce off
+    opacity: 0; // hidden until the wizard's balls land and become them
   }
 
   .line {
     flex: 1;
-    width: 3px;
+    width: 4px;
     background-color: var(--color-ink);
   }
 </style>

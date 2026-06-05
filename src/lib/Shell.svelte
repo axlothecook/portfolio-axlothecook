@@ -11,39 +11,62 @@
   interface Props {
     indicator?: string
     indicatorEl?: HTMLElement // bound out so App can drive its fade via GSAP
+    dividerEl?: HTMLElement // bound out: the ball that melts into the line on load
+    furnitureEl?: HTMLElement // bound out: shell furniture that fades in on load
+    sticksEl?: HTMLElement // bound out: bottom-right sticks (drop in after the shot)
+    topBarEl?: HTMLElement // bound out: the top-centre toggle pill (dragged in)
     children?: import('svelte').Snippet
   }
-  let { indicator = '', indicatorEl = $bindable(), children }: Props = $props()
+  let {
+    indicator = '',
+    indicatorEl = $bindable(),
+    dividerEl = $bindable(),
+    furnitureEl = $bindable(),
+    sticksEl = $bindable(),
+    topBarEl = $bindable(),
+    children,
+  }: Props = $props()
 </script>
 
 <div class="shell">
-  <!-- thin full-height bar down the far-left edge (#34302d) -->
-  <div class="left-bar"></div>
+  <!-- centre divider: ONE element. On load it's a round ball that drops +
+       bounces, then squashes and stretches its own body into the line (the ball
+       melts into the line — same element throughout). -->
+  <div class="divider-anchor">
+    <div class="center-divider" bind:this={dividerEl}></div>
+  </div>
 
-  <!-- fixed centre divider: static across all slides, never animates -->
-  <div class="center-divider"></div>
+  <!-- shell furniture that fades in on load (everything except the divider and
+       the slides) -->
+  <div class="furniture" bind:this={furnitureEl}>
+    <!-- thin full-height bar down the far-left edge (#34302d) -->
+    <div class="left-bar"></div>
 
-  <!-- corners + edges (fixed to the viewport) -->
-  <div class="region top-left">
-    <svg class="plus" viewBox="0 0 20 20" aria-hidden="true"><use href="#icon-plus" /></svg>
-    <span class="dots">
-      <span class="dot"></span>
-      <span class="dot"></span>
-      <span class="dot"></span>
-    </span>
+    <!-- corners + edges (fixed to the viewport) -->
+    <div class="region top-left">
+      <svg class="plus" viewBox="0 0 20 20" aria-hidden="true"><use href="#icon-plus" /></svg>
+      <span class="dots">
+        <span class="dot"></span>
+        <span class="dot"></span>
+        <span class="dot"></span>
+      </span>
+    </div>
+    <div class="region top-center" bind:this={topBarEl}><Toggle /></div>
+    <div class="region bottom-left">
+      <span class="dots">
+        <span class="dot"></span>
+        <span class="dot"></span>
+        <span class="dot"></span>
+      </span>
+    </div>
+    <div class="region bottom-center" bind:this={indicatorEl}>
+      <Indicator label={indicator} />
+    </div>
   </div>
-  <div class="region top-center"><Toggle /></div>
-  <div class="region bottom-left">
-    <span class="dots">
-      <span class="dot"></span>
-      <span class="dot"></span>
-      <span class="dot"></span>
-    </span>
-  </div>
-  <div class="region bottom-center" bind:this={indicatorEl}>
-    <Indicator label={indicator} />
-  </div>
-  <div class="region bottom-right"><Sticks /></div>
+
+  <!-- bottom-right sticks: OUTSIDE the furniture group — hidden until the wizard
+       shoots, then they drop in (animated from App's load timeline). -->
+  <div class="region bottom-right" bind:this={sticksEl}><Sticks /></div>
 
   <!-- the scrolling slides fill the centre (each slide owns its own divider) -->
   {@render children?.()}
@@ -57,16 +80,24 @@
     overflow: hidden;
   }
 
-  // Fixed centre divider — static across all slides, thicker than before.
-  .center-divider {
+  // Centring wrapper: holds the divider at the exact viewport centre so the
+  // inner element can be transformed by GSAP without losing its position.
+  .divider-anchor {
     position: fixed;
     top: 50%;
     left: 50%;
     transform: translate(-50%, -50%);
+    z-index: 1;
+  }
+
+  // The divider line — also the ball on load (one element). On load App sets it
+  // to a 14px circle, then animates width/height into the 4px×full-height line.
+  // A pill border-radius gives the line rounded caps and the ball a full circle.
+  .center-divider {
     width: 4px;
     height: var(--divider-height);
     background-color: var(--color-ink);
-    z-index: 1;
+    border-radius: 999px;
   }
 
   // Thin full-height bar on the far-left edge (always #34302d, independent of
