@@ -40,6 +40,15 @@ $text: #34302d; // ink (body text)
   --divider-height: 18rem;
 }
 
+// Dark mode: flip bg ↔ ink. Toggled by setting data-theme="dark" on <html>.
+// The same A/B colour pairs, inverted — dark surfaces, light ink.
+:root[data-theme='dark'] {
+  --color-bg: #1e1f1c; // dark page background (hard black)
+  --color-navbar: #2a2926; // navbar surface (slightly lighter than bg)
+  --color-ink: #ececec; // light ink on dark
+  // --color-ink-soft stays #34302d as the constant dark accent (left wall etc.)
+}
+
 // ---------------------------------------------------------------------------
 // Base
 // ---------------------------------------------------------------------------
