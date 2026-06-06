@@ -15,6 +15,10 @@
     furnitureEl?: HTMLElement // bound out: shell furniture that fades in on load
     sticksEl?: HTMLElement // bound out: bottom-right sticks (drop in after the shot)
     topBarEl?: HTMLElement // bound out: the top-centre toggle pill (dragged in)
+    leftBarEl?: HTMLElement // bound out: the far-left wall (dragged in from off-screen)
+    plusEl?: SVGElement // bound out: the top-left "+" mark (assembled from balls, then spins)
+    topDotsEl?: HTMLElement // bound out: the 3 dots under the "+" (assembled from rubble)
+    bottomDotsEl?: HTMLElement // bound out: the bottom-left 3 dots (Newton's-cradle finale)
     children?: import('svelte').Snippet
   }
   let {
@@ -24,6 +28,10 @@
     furnitureEl = $bindable(),
     sticksEl = $bindable(),
     topBarEl = $bindable(),
+    leftBarEl = $bindable(),
+    plusEl = $bindable(),
+    topDotsEl = $bindable(),
+    bottomDotsEl = $bindable(),
     children,
   }: Props = $props()
 </script>
@@ -36,16 +44,19 @@
     <div class="center-divider" bind:this={dividerEl}></div>
   </div>
 
+  <!-- the far-left wall: OUTSIDE the furniture group so it isn't part of the
+       furniture fade — the wizard DRAGS it in from off-screen left as its own
+       beat (after the top bar). -->
+  <div class="left-bar" bind:this={leftBarEl}></div>
+
   <!-- shell furniture that fades in on load (everything except the divider and
        the slides) -->
   <div class="furniture" bind:this={furnitureEl}>
-    <!-- thin full-height bar down the far-left edge (#34302d) -->
-    <div class="left-bar"></div>
 
     <!-- corners + edges (fixed to the viewport) -->
     <div class="region top-left">
-      <svg class="plus" viewBox="0 0 20 20" aria-hidden="true"><use href="#icon-plus" /></svg>
-      <span class="dots">
+      <svg class="plus" viewBox="0 0 20 20" aria-hidden="true" bind:this={plusEl}><use href="#icon-plus" /></svg>
+      <span class="dots" bind:this={topDotsEl}>
         <span class="dot"></span>
         <span class="dot"></span>
         <span class="dot"></span>
@@ -53,7 +64,8 @@
     </div>
     <div class="region top-center" bind:this={topBarEl}><Toggle /></div>
     <div class="region bottom-left">
-      <span class="dots">
+      <span class="dots" bind:this={bottomDotsEl}>
+        <span class="dot"></span>
         <span class="dot"></span>
         <span class="dot"></span>
         <span class="dot"></span>
@@ -64,8 +76,10 @@
     </div>
   </div>
 
-  <!-- bottom-right sticks: OUTSIDE the furniture group — hidden until the wizard
-       shoots, then they drop in (animated from App's load timeline). -->
+  <!-- bottom-right sticks: OUTSIDE the furniture group — they stand on the floor.
+       On load they start short + equal, hanging from the TOP of the screen, then
+       FALL DOWN into this standing position when the wizard's ball hits them
+       (animated from App's load timeline). -->
   <div class="region bottom-right" bind:this={sticksEl}><Sticks /></div>
 
   <!-- the scrolling slides fill the centre (each slide owns its own divider) -->
@@ -154,7 +168,7 @@
   }
 
   .bottom-left {
-    bottom: 2rem;
+    bottom: 4rem; // lifted 2rem up from the original 2rem
     left: 3.75rem;
   }
 
@@ -165,6 +179,7 @@
   }
 
 
+  // Sticks stand on the floor, bottom-right.
   .bottom-right {
     bottom: 0;
     right: 10rem;

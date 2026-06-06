@@ -1,10 +1,11 @@
 <script lang="ts">
   // Decorative bottom-right motif: thin vertical sticks of varying height, each
-  // topped with a dot. Static here; animations (tallest dot bobs, cluster
-  // lowers+grows off the hero slide) are added in feat/animations.
+  // topped with a dot, standing on the floor. On load they start short + equal,
+  // hanging from the top of the screen; when the wizard's ball hits them they
+  // FALL DOWN to this standing position and extend to their full heights.
   //
   // Heights as data so they're easy to tweak. `tall` marks the tallest stick
-  // (its dot leads the ball-drop bounce, built in feat/animations).
+  // (its dot leads the ball-drop bounce).
   const sticks: { height: number; tall?: boolean }[] = [
     { height: 140 },
     { height: 250, tall: true },
@@ -22,18 +23,19 @@
 </div>
 
 <style lang="scss">
+  // Standing on the floor: dots on top, lines below, aligned to the bottom edge.
   .sticks {
     display: flex;
     align-items: flex-end;
     gap: 1.1rem;
   }
 
-  // Each stick: dot on top, thin line below, total height driven by --stick-height.
+  // Each stick: dot on top, thin line below. App drives the line's height (short
+  // → full) on the drop; the dot rides on top.
   .stick {
     display: flex;
     flex-direction: column;
     align-items: center;
-    height: var(--stick-height);
   }
 
   .dot {
@@ -41,13 +43,15 @@
     height: 11px;
     border-radius: 50%;
     background-color: var(--color-ink);
-    // no gap — the dot rests ON the stick top so it has a surface to bounce off
+    // no gap — the dot rests ON the line's top (a surface to bounce off later)
     opacity: 0; // hidden until the wizard's balls land and become them
   }
 
   .line {
-    flex: 1;
     width: 4px;
     background-color: var(--color-ink);
+    // App drives this: starts at the SHORT length, grows to full (--stick-height)
+    // on the drop. Falls back to full if no JS.
+    height: var(--line-height, var(--stick-height));
   }
 </style>
