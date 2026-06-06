@@ -9,7 +9,11 @@
 
   // The bottom-centre indicator shows the active slide's position label
   // (Welcome has no label; Projects=Top, Skills=Middle, About=Bottom).
+  type Mode = 'straightforward' | 'animated'
   interface Props {
+    mode?: Mode // current display mode (drives the toggle's active state)
+    onModeChange?: (m: Mode) => void // called when the user clicks the toggle
+    animatedLocked?: boolean // true during the load animation → Animated not yet clickable
     indicator?: string
     indicatorEl?: HTMLElement // bound out so App can drive its fade via GSAP
     dividerEl?: HTMLElement // bound out: the ball that melts into the line on load
@@ -23,6 +27,9 @@
     children?: import('svelte').Snippet
   }
   let {
+    mode = 'straightforward',
+    onModeChange,
+    animatedLocked = false,
     indicator = '',
     indicatorEl = $bindable(),
     dividerEl = $bindable(),
@@ -76,7 +83,9 @@
         <span class="dot"></span>
       </span>
     </div>
-    <div class="region top-center" bind:this={topBarEl}><Toggle /></div>
+    <div class="region top-center" bind:this={topBarEl}>
+      <Toggle {mode} onChange={onModeChange} {animatedLocked} />
+    </div>
     <div class="region bottom-left">
       <span class="dots" bind:this={bottomDotsEl}>
         <span class="dot"></span>
@@ -220,6 +229,7 @@
     top: 1.5rem;
     left: 50%;
     transform: translateX(-50%);
+    z-index: 20; // above the animated-mode overlay so the toggle stays clickable
   }
 
   // Dark/light theme pill: far top-right, PAST the sticks column (which lives at
