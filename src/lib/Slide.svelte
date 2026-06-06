@@ -170,4 +170,77 @@
   .hint-slot {
     flex: 0 0 auto;
   }
+
+  // ---------------------------------------------------------------------------
+  // MOBILE (≤768px): the desktop layout puts the title LEFT and content RIGHT of
+  // a centred vertical divider — that can't fit a phone. Stack instead: title on
+  // top (left-aligned, smaller), content full-width below. The vertical shell
+  // divider is hidden on mobile (App/Shell handle that); the spacer collapses.
+  // ---------------------------------------------------------------------------
+  @media (max-width: 768px) {
+    // Each slide stays a FULL-VIEWPORT panel (the deck swaps panels on swipe — see
+    // App.svelte), but its internals stack vertically instead of sitting either
+    // side of the vertical divider. Top padding clears the fixed top furniture.
+    .slide {
+      align-items: stretch;
+      padding: 5.5rem 1.25rem 3.5rem;
+      box-sizing: border-box;
+    }
+
+    .grid {
+      // single column, stacked top-to-bottom, content under the title
+      grid-template-columns: 1fr;
+      grid-template-rows: auto auto 1fr;
+      row-gap: 1.25rem;
+      align-content: center; // centre the stacked block in the panel
+      align-items: stretch;
+      height: 100%;
+    }
+
+    // title sits on TOP, left-aligned, no longer pinned to a divider edge
+    .title-mask {
+      justify-self: stretch;
+    }
+    .title {
+      text-align: left;
+      padding-right: 0;
+      font-size: 2.6rem;
+      white-space: normal; // allow wrapping on narrow screens
+    }
+    .title.hero {
+      font-size: 3.4rem;
+    }
+
+    // the vertical-divider spacer collapses to a thin horizontal rule under the
+    // title (a light line separating title from content).
+    .spacer {
+      width: 100%;
+      height: 2px;
+      background-color: color-mix(in srgb, var(--color-ink) 25%, transparent);
+      border-radius: 999px;
+    }
+
+    // content goes full-width below the title; no left inset from a divider.
+    .content-col {
+      width: 100%;
+      gap: 0.75rem;
+      align-items: flex-start;
+    }
+    .content {
+      padding-left: 0;
+      padding-right: 0;
+    }
+    // scrollable content fills the remaining panel height and scrolls internally
+    // if it overflows (same model as desktop, just full-width + flexible height).
+    .content.scrollable {
+      height: auto;
+      max-height: 100%;
+      overflow-y: auto;
+      cursor: default;
+    }
+    // the side scroll-hint (a desktop affordance) takes no room on mobile.
+    .hint-slot {
+      display: none;
+    }
+  }
 </style>

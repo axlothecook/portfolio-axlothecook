@@ -259,4 +259,87 @@
     bottom: 0;
     right: 10rem;
   }
+
+  // ---------------------------------------------------------------------------
+  // MOBILE (≤768px): the slides stack (title over content, see Slide.svelte), so
+  // the CENTRED VERTICAL divider no longer separates two columns — hide it (a
+  // light horizontal rule under each title replaces it). Trim/reposition the
+  // decorative furniture so it doesn't crowd a phone, but keep both toggles.
+  // ---------------------------------------------------------------------------
+  @media (max-width: 768px) {
+    // The centre divider turns HORIZONTAL: a line across the middle of the
+    // screen, inset 4rem from each side. The slides stack title-above /
+    // content-below this line (see Slide.svelte). The line is one element shared
+    // with the load animation, so its final size is set here (width = span,
+    // height = thickness); App's MOBILE load branch grows it along this axis.
+    .center-divider {
+      width: calc(100vw - 8rem); // 4rem inset each side
+      height: 6px; // thickness (was the line width on desktop)
+    }
+
+    // the inner scroll-indicator runs along the horizontal line now: 1/3 of the
+    // span, sliding left/middle/right for the active slide.
+    .inner-line {
+      --span: calc(100vw - 8rem);
+      --inner-w: calc(var(--span) / 3);
+      --half-h: calc(var(--span) / 2 - var(--inner-w) / 2 - 5px);
+
+      width: var(--inner-w);
+      height: 3px;
+    }
+    // slide the inner indicator horizontally (top→left, bottom→right) on mobile
+    .inner-line[data-pos='top'] {
+      transform: translate(-50%, -50%) translateX(calc(var(--half-h) * -1));
+    }
+    .inner-line[data-pos='middle'] {
+      transform: translate(-50%, -50%);
+    }
+    .inner-line[data-pos='bottom'] {
+      transform: translate(-50%, -50%) translateX(var(--half-h));
+    }
+
+    // a slimmer left edge bar
+    .left-bar {
+      width: 8px;
+    }
+
+    // top-left: smaller "+" and tighter to the corner, clear of the left bar
+    .top-left {
+      top: 1rem;
+      left: 1.5rem;
+      gap: 0.4rem;
+    }
+    .plus {
+      width: 30px;
+      height: 30px;
+    }
+    // the small stacked dots under the "+" add clutter on a phone — hide them
+    .top-left .dots {
+      display: none;
+    }
+
+    // toggles stay but pull in toward the edges
+    .top-center {
+      top: 0.9rem;
+    }
+    .top-right-theme {
+      top: 0.9rem;
+      right: 1rem;
+    }
+
+    // bottom-left dots + bottom-centre indicator: keep the indicator (it shows
+    // which slide you're on), drop the decorative bottom-left dot cradle.
+    .bottom-left {
+      display: none;
+    }
+    .bottom-center {
+      bottom: 1.5rem;
+    }
+
+    // the bottom-right sticks are a decorative desktop motif tuned in px — hide
+    // on mobile so they don't collide with content or the indicator.
+    .bottom-right {
+      display: none;
+    }
+  }
 </style>
