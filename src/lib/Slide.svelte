@@ -173,65 +173,68 @@
 
   // ---------------------------------------------------------------------------
   // MOBILE (≤768px): the desktop layout puts the title LEFT and content RIGHT of
-  // a centred vertical divider — that can't fit a phone. Stack instead: title on
-  // top (left-aligned, smaller), content full-width below. The vertical shell
-  // divider is hidden on mobile (App/Shell handle that); the spacer collapses.
+  // a centred VERTICAL divider. On mobile that divider is HORIZONTAL at viewport
+  // centre (drawn by the Shell, fixed, 4rem-inset each side). So each slide
+  // stacks AROUND that line: title in the TOP half (bottom-aligned, ending just
+  // above the line), content in the BOTTOM half (top-aligned, starting just
+  // below it). Slide draws NO line of its own — the Shell's fixed line is it.
   // ---------------------------------------------------------------------------
   @media (max-width: 768px) {
-    // Each slide stays a FULL-VIEWPORT panel (the deck swaps panels on swipe — see
-    // App.svelte), but its internals stack vertically instead of sitting either
-    // side of the vertical divider. Top padding clears the fixed top furniture.
+    // each slide stays a FULL-VIEWPORT panel (the deck swaps panels on swipe —
+    // see App.svelte); side gutters match the 4rem the Shell line is inset.
     .slide {
       align-items: stretch;
-      padding: 5.5rem 1.25rem 3.5rem;
+      padding: 0 4rem;
       box-sizing: border-box;
     }
 
+    // two equal halves around the centre line: [title half] [gap] [content half].
+    // The middle 0-height track sits exactly on the viewport centre where the
+    // Shell's fixed horizontal line is; a small row-gap keeps text off the line.
     .grid {
-      // single column, stacked top-to-bottom, content under the title
       grid-template-columns: 1fr;
-      grid-template-rows: auto auto 1fr;
-      row-gap: 1.25rem;
-      align-content: center; // centre the stacked block in the panel
+      grid-template-rows: 1fr 0 1fr;
+      row-gap: 1.5rem;
       align-items: stretch;
       height: 100%;
     }
 
-    // title sits on TOP, left-aligned, no longer pinned to a divider edge
+    // TITLE — top half, bottom-aligned so it sits just above the centre line.
     .title-mask {
+      grid-row: 1;
       justify-self: stretch;
+      align-self: end;
     }
     .title {
       text-align: left;
       padding-right: 0;
       font-size: 2.6rem;
-      white-space: normal; // allow wrapping on narrow screens
+      white-space: normal; // wrap on narrow screens
+      line-height: 1.1;
     }
     .title.hero {
       font-size: 3.4rem;
     }
 
-    // the vertical-divider spacer collapses to a thin horizontal rule under the
-    // title (a light line separating title from content).
+    // the per-slide spacer is not used on mobile (the Shell draws the line).
     .spacer {
-      width: 100%;
-      height: 2px;
-      background-color: color-mix(in srgb, var(--color-ink) 25%, transparent);
-      border-radius: 999px;
+      display: none;
     }
 
-    // content goes full-width below the title; no left inset from a divider.
+    // CONTENT — bottom half, top-aligned so it starts just below the centre line.
     .content-col {
+      grid-row: 3;
       width: 100%;
       gap: 0.75rem;
       align-items: flex-start;
+      align-self: start;
+      min-height: 0; // allow the inner scroller to size within the half
     }
     .content {
       padding-left: 0;
       padding-right: 0;
     }
-    // scrollable content fills the remaining panel height and scrolls internally
-    // if it overflows (same model as desktop, just full-width + flexible height).
+    // scrollable content fills its half and scrolls internally if it overflows.
     .content.scrollable {
       height: auto;
       max-height: 100%;

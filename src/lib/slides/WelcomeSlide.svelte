@@ -49,4 +49,21 @@
     // top↔middle gap reads bigger. Nudge the last row down to even it out.
     margin-top: 6px;
   }
+
+  // MOBILE (≤768px): the tagline rows are too wide for a phone at desktop sizes;
+  // scale them down and let them wrap if still needed.
+  @media (max-width: 768px) {
+    .line {
+      white-space: normal;
+    }
+    .line-1 {
+      font-size: 2rem;
+    }
+    .line-2 {
+      font-size: 1.6rem;
+    }
+    .line-3 {
+      font-size: 1.25rem;
+    }
+  }
 </style>

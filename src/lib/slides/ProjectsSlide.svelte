@@ -93,8 +93,30 @@
     }, 90)
   }
 
+  // Tap/click toggles the popup — this is how TOUCH devices (no hover) open it:
+  // tap a row to show its popup, tap again (or tap elsewhere) to dismiss.
+  function toggle(index: number) {
+    if (hovered === index) {
+      cancelClose()
+      hovered = null
+    } else {
+      open(index)
+    }
+  }
+
   function onScrollOrResize() {
     if (hovered != null) position(hovered)
+  }
+
+  // Tap OUTSIDE a row or the popup dismisses it (touch devices, where there's no
+  // mouseleave). A row's own click is handled by toggle() and stops here via the
+  // target check.
+  function onDocPointerDown(e: PointerEvent) {
+    if (hovered == null) return
+    const t = e.target as HTMLElement
+    if (t.closest?.('.project') || t.closest?.('.popup-layer')) return
+    cancelClose()
+    hovered = null
   }
 
   onMount(() => {
@@ -103,9 +125,11 @@
     // popup while the list scrolls. Also re-track on viewport resize.
     window.addEventListener('scroll', onScrollOrResize, true)
     window.addEventListener('resize', onScrollOrResize)
+    document.addEventListener('pointerdown', onDocPointerDown)
     return () => {
       window.removeEventListener('scroll', onScrollOrResize, true)
       window.removeEventListener('resize', onScrollOrResize)
+      document.removeEventListener('pointerdown', onDocPointerDown)
     }
   })
 
@@ -127,6 +151,8 @@
           onmouseleave={scheduleClose}
           onfocusin={() => open(i)}
           onfocusout={scheduleClose}
+          onclick={() => toggle(i)}
+          onkeydown={(e) => (e.key === 'Enter' || e.key === ' ') && (e.preventDefault(), toggle(i))}
         >
           <span class="name">{project.name}</span>
           {#if project.ongoing}<span class="ongoing">(ongoing)</span>{/if}
