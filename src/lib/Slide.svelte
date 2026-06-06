@@ -267,12 +267,13 @@
       max-height: 100%;
       overflow-y: auto;
     }
-    // `compact` slides (e.g. Skills) cap the scrollable ~20% shorter so the data
-    // reads as a compact block (not running toward the bottom furniture). It's
-    // still the SINGLE scroller, so the overflow-driven scroll hint keeps working.
+    // `compact` slides (e.g. Skills) cap the scrollable MUCH shorter so the
+    // visible block ends well ABOVE the bottom-right sticks/animations — only a
+    // few rows show, then it scrolls. Still the SINGLE scroller, so the
+    // overflow-driven scroll hint keeps working.
     .content-col.compact .content.scrollable {
       flex: 0 1 auto;
-      max-height: 80%;
+      max-height: 34%;
     }
     // the content-col stacks the content over the hint on mobile (vs side-by-side
     // on desktop) so the scroll hint sits centred BELOW the scrollable content.
