@@ -217,7 +217,11 @@
     // the Welcome hero title runs bigger — there's room on the front page; push it
     // toward the desktop scale (still capped so it doesn't wrap on 375px).
     .title.hero {
-      font-size: 4.25rem; // big hero presence on the front page
+      // "Welcome" sized to the LARGEST that still fits on one row without
+      // clipping. Measured: it fills the content width (~327px at 375vw) at
+      // ~4.7rem, so 18.5vw scales it to that edge on any width while capping at
+      // 5.5rem on wide phones — never clips, never wraps.
+      font-size: min(18.5vw, 5.5rem);
       font-weight: 500; // heavier, closer to desktop hero presence
     }
 

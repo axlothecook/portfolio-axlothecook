@@ -67,8 +67,13 @@
     .line {
       white-space: normal;
     }
+    // line-1 ("To a place where") fills ONE row at the largest size it can. It's a
+    // long phrase (~2.4x wider than "Welcome"), so its one-row max is much
+    // smaller than the hero. Measured: it fills the content width at ~10.5vw, so
+    // that vw (capped) keeps it on a single line, edge-to-edge, never clipping.
     .line-1 {
-      font-size: 2.75rem;
+      white-space: nowrap;
+      font-size: min(10.5vw, 2.5rem);
     }
     .line-2 {
       font-size: 2.1rem;
