@@ -3,6 +3,7 @@
   // are passed in as children. The bottom-centre indicator shows the active
   // slide's position label, passed via the `indicator` prop.
   import Toggle from './Toggle.svelte'
+  import ThemeToggle from './ThemeToggle.svelte'
   import Sticks from './Sticks.svelte'
   import Indicator from './Indicator.svelte'
 
@@ -34,6 +35,14 @@
     bottomDotsEl = $bindable(),
     children,
   }: Props = $props()
+
+  // Scroll-position indicator inside the separator: a thinner inner line that
+  // slides to Top / Middle / Bottom for the active section. Hidden on Welcome
+  // (indicator === ''). Position derived from the active section label.
+  const innerPos = $derived(
+    indicator === 'Top' ? 'top' : indicator === 'Bottom' ? 'bottom' : 'middle',
+  )
+  const innerVisible = $derived(indicator !== '')
 </script>
 
 <div class="shell">
@@ -42,6 +51,11 @@
        melts into the line — same element throughout). -->
   <div class="divider-anchor">
     <div class="center-divider" bind:this={dividerEl}></div>
+    <!-- scroll-position indicator: a thinner inner line (1/3 the separator's
+         length) that slides to top/middle/bottom for the active section. Shown
+         only off the Welcome slide. Overlaid on the separator, independent of
+         the divider's load-animation transforms. -->
+    <div class="inner-line" class:visible={innerVisible} data-pos={innerPos}></div>
   </div>
 
   <!-- the far-left wall: OUTSIDE the furniture group so it isn't part of the
@@ -76,6 +90,11 @@
     </div>
   </div>
 
+  <!-- dark/light theme pill: OUTSIDE the furniture group so it's visible from the
+       very START (before the ball drops) — not part of the furniture fade-in. It
+       persists across every slide. Far top-right, past the sticks column. -->
+  <div class="region top-right-theme"><ThemeToggle /></div>
+
   <!-- bottom-right sticks: OUTSIDE the furniture group — they stand on the floor.
        On load they start short + equal, hanging from the TOP of the screen, then
        FALL DOWN into this standing position when the wizard's ball hits them
@@ -108,21 +127,57 @@
   // to a 14px circle, then animates width/height into the 4px×full-height line.
   // A pill border-radius gives the line rounded caps and the ball a full circle.
   .center-divider {
-    width: 4px;
+    width: 6px;
     height: var(--divider-height);
     background-color: var(--color-ink);
     border-radius: 999px;
   }
 
-  // Thin full-height bar on the far-left edge (always #34302d, independent of
-  // the switchable body ink colour).
+  // Scroll-position indicator: a thinner inner line INSIDE the separator. Length
+  // = 1/3 of the separator; coloured like the page bg so it reads as a moving
+  // slot within the ink line. Slides to top/middle/bottom for the active section,
+  // never closer than 5px to either end. Hidden (faded) on the Welcome slide.
+  .inner-line {
+    --inner-h: calc(var(--divider-height) / 3); // 1/3 the separator length
+    --half: calc(var(--divider-height) / 2 - var(--inner-h) / 2 - 5px); // max travel (5px inset)
+
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 3px; // thinner than the 6px separator
+    height: var(--inner-h);
+    background-color: var(--color-bg);
+    border-radius: 999px;
+    opacity: 0;
+    // centre it, then offset up/down per position (set below)
+    transform: translate(-50%, -50%) translateY(0);
+    transition:
+      transform 0.45s cubic-bezier(0.22, 1, 0.36, 1),
+      opacity 0.3s ease;
+    pointer-events: none;
+  }
+  .inner-line.visible {
+    opacity: 1;
+  }
+  .inner-line[data-pos='top'] {
+    transform: translate(-50%, -50%) translateY(calc(var(--half) * -1));
+  }
+  .inner-line[data-pos='middle'] {
+    transform: translate(-50%, -50%) translateY(0);
+  }
+  .inner-line[data-pos='bottom'] {
+    transform: translate(-50%, -50%) translateY(var(--half));
+  }
+
+  // Thin full-height bar on the far-left edge. Uses the body ink colour so it
+  // FOLLOWS the theme: brown #34302d in light mode, light #ececec in dark mode.
   .left-bar {
     position: fixed;
     top: 0;
     left: 0;
     width: 20px;
     height: 100%;
-    background-color: var(--color-ink-soft); // #34302d
+    background-color: var(--color-ink);
   }
 
   .region {
@@ -165,6 +220,16 @@
     top: 1.5rem;
     left: 50%;
     transform: translateX(-50%);
+  }
+
+  // Dark/light theme pill: far top-right, PAST the sticks column (which lives at
+  // right: 10rem) — sits between the sticks and the edge, padded from the edge.
+  // z-index above the slides/deck so it's actually clickable (the slides render
+  // later in the DOM and would otherwise cover it).
+  .top-right-theme {
+    top: 1.5rem;
+    right: 2.5rem;
+    z-index: 5;
   }
 
   .bottom-left {

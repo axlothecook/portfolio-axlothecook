@@ -274,7 +274,7 @@
 
     const dropFrom = -(window.innerHeight / 2 + 100) // off-screen above centre
     const BALL = 14 // ball diameter (px)
-    const LINE_W = 4 // final line width (px)
+    const LINE_W = 6 // final line width (px) — matches .center-divider width
     const lineH = dividerEl.offsetHeight || 288
 
     // --- initial states ---
