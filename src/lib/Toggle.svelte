@@ -70,12 +70,17 @@
     border-radius: 999px;
     cursor: pointer;
     overflow: hidden; // clip the blobs to the pill shape
+    // smooth the active-state change (fill + text colour)
+    transition:
+      background-color 0.3s ease,
+      color 0.3s ease;
   }
 
   // The label sits above the blobs AND the frosted glass cover.
   .label {
     position: relative;
     z-index: 2;
+    transition: color 0.3s ease;
   }
 
   // The currently selected option gets a subtle filled look (Straightforward).
@@ -99,13 +104,14 @@
     color: #fff;
   }
 
-  // The blob layer — hidden unless the Animated option is active.
+  // The blob layer — hidden unless the Animated option is active (fades in/out).
   .blobs {
     position: absolute;
     inset: 0;
     z-index: 0;
     opacity: 0;
     pointer-events: none;
+    transition: opacity 0.35s ease;
   }
   .animated-opt.active .blobs {
     opacity: 1;
@@ -124,6 +130,7 @@
     backdrop-filter: blur(5px) saturate(1.5);
     -webkit-backdrop-filter: blur(5px) saturate(1.5);
     box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.3);
+    transition: opacity 0.35s ease;
   }
   .animated-opt.active .glass {
     opacity: 1;
