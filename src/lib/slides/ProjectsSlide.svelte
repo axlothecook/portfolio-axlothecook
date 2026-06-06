@@ -14,7 +14,9 @@
           {#each project.tech as t}
             {@const icon = techIcons[t]}
             <span class="badge" title={icon.label} aria-label={icon.label}>
-              <icon.component size="1em" />
+              <!-- size="100%" → the SVG fills the fixed square badge box, which is
+                   what actually centres every icon uniformly (see .badge styles) -->
+              <icon.component size="100%" />
             </span>
           {/each}
         </span>
@@ -42,9 +44,16 @@
     line-height: 1.2;
   }
 
+  .name {
+    // keep the name on the same centre-line as the badges (flex already centres,
+    // but pin line-height to 1 so the text box equals its glyph box)
+    line-height: 1;
+  }
+
   .ongoing {
     font-size: 0.9rem;
     opacity: 0.7;
+    line-height: 1;
   }
 
   .tech {
@@ -53,12 +62,27 @@
     gap: 0.5rem;
   }
 
-  // Monochrome tech icons (each is its own component using currentColor, so they
-  // follow the theme ink — brown in light mode, white in dark mode).
+  // Monochrome tech icons. Each icon is its own component with its OWN viewBox /
+  // internal padding, so a bare SVG won't optically line up. The fix: give every
+  // badge an IDENTICAL square box (--badge-size) and centre the SVG inside it
+  // with place-items:center, so every glyph sits on the same centre-line as its
+  // neighbours and as the text. currentColor → follows the theme ink.
   .badge {
-    display: inline-flex;
-    align-items: center;
+    --badge-size: 1.15em; // square box, slightly larger than the 1em glyph
+
+    display: grid;
+    place-items: center;
+    width: var(--badge-size);
+    height: var(--badge-size);
     color: var(--color-ink);
     opacity: 0.85;
+
+    // the SVG fills its box and is block-level so it centres to the box (not the
+    // text baseline), removing the baseline drop inline SVGs otherwise have.
+    :global(svg) {
+      display: block;
+      width: 100%;
+      height: 100%;
+    }
   }
 </style>
