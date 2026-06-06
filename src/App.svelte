@@ -81,16 +81,18 @@
     const fromText = from.querySelectorAll('.slide-text')
     const toText = to.querySelectorAll('.slide-text')
 
-    // On MOBILE slides change horizontally, so the text moves on X (the outgoing
-    // exits LEFT, the incoming enters from the RIGHT — a right-to-left flow). On
-    // desktop it's the vertical Y motion. `axis` picks the property; outgoing
-    // goes negative, incoming starts positive.
+    // On MOBILE slides change horizontally (text moves on X); on desktop it's the
+    // vertical Y motion. The motion DIRECTION follows the navigation direction so
+    // the user can tell which way they're going: going FORWARD (next, dir=1) the
+    // outgoing exits in the negative direction and the incoming enters from the
+    // positive side; going BACKWARD (prev, dir=-1) both flip. (Forward = exits
+    // left / enters from right; backward = exits right / enters from left.)
     const axis: 'x' | 'y' = isMobile() ? 'x' : 'y'
     const outVars: gsap.TweenVars = { autoAlpha: 0, duration: FADE_OUT, ease: 'power2.in' }
     const inFrom: gsap.TweenVars = { autoAlpha: 0 }
     const inTo: gsap.TweenVars = { autoAlpha: 1, duration: FADE_IN, ease: 'power2.out' }
-    outVars[axis] = -SHIFT
-    inFrom[axis] = SHIFT
+    outVars[axis] = -SHIFT * direction
+    inFrom[axis] = SHIFT * direction
     inTo[axis] = 0
 
     // keep the incoming panel hidden until the out-fade has finished

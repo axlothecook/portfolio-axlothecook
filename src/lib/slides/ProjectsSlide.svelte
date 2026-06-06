@@ -308,15 +308,25 @@
   // long badge list overflows, that row scrolls SIDEWAYS (no wrapping into many
   // rows, which was the visual clutter). Body ~16px.
   @media (max-width: 768px) {
+    // centre the list as a BLOCK (its widest row defines the block; rows align to
+    // that block's left edge — so the group is centred under the line while each
+    // row's text stays left-aligned).
+    .list {
+      width: fit-content;
+      max-width: 100%;
+      margin-inline: auto;
+      align-items: stretch;
+    }
     .project {
       font-size: 1rem; // ~16px body
     }
-    // each project = ONE horizontal row (name + badges); rows stay left-aligned
-    // (a wide name+badge row reads better flush-left than centred, and long ones
-    // scroll sideways). Only the short-text slides (Welcome/Skills/About) centre.
+    // each project = ONE horizontal row (name + badges) on a single line; a long
+    // badge list scrolls SIDEWAYS rather than wrapping. padding-block gives the
+    // text descenders (y, g, p) room so overflow-x clipping doesn't cut them.
     .row {
-      flex-wrap: nowrap; // keep name + badges on one line
+      flex-wrap: nowrap;
       max-width: 100%;
+      padding-block: 0.15rem; // room for descenders inside the x-scroll box
       overflow-x: auto; // overflowing badges scroll sideways instead of wrapping
       overflow-y: hidden;
       scrollbar-width: none; // hide the row's own scrollbar (Firefox)

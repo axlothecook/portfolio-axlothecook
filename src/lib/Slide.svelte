@@ -191,9 +191,13 @@
     // halves are EQUAL, with the line between them at the vertical centre — so the
     // title (bottom-aligned in its half) and content (top-aligned in its half)
     // sit equidistant from the line. Fixes the "text sits low / unbalanced" issue.
+    // The block is LIFTED above centre: the top row is smaller than the bottom
+    // row, so the line sits higher and the content half gets more room (the long
+    // Skills list was clipping over the bottom furniture when centred). Title sits
+    // at the bottom of the (shorter) top row, just above the line.
     .grid {
       grid-template-columns: 1fr;
-      grid-template-rows: 1fr auto 1fr;
+      grid-template-rows: 0.5fr auto 1fr;
       align-items: stretch;
       justify-items: stretch;
       row-gap: 1rem;
@@ -207,10 +211,12 @@
       align-self: end;
       overflow: visible;
     }
+    // data-slide titles (Projects / Skills & Tools / About me): as large as they
+    // fit on one/two lines without clipping. vw-scaled, capped.
     .title {
       text-align: center; // centred above the line on mobile
       padding-right: 0;
-      font-size: 2.25rem; // up from 1.875rem (data-slide titles)
+      font-size: min(9vw, 2.75rem);
       white-space: normal;
       line-height: 1.1;
     }
