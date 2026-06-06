@@ -55,12 +55,17 @@
   .socials {
     gap: 0.6rem;
   }
+  // The social icons do NOT change colour/appearance on hover, focus or active —
+  // only the cursor signals they're clickable (pointer comes free from <a>). The
+  // colour stays fixed at the theme ink in every interaction state.
   .social {
     display: inline-flex;
     color: var(--color-ink);
-    transition: opacity 0.2s ease;
   }
-  .social:hover {
-    opacity: 0.65;
+  .social:hover,
+  .social:focus,
+  .social:focus-visible,
+  .social:active {
+    color: var(--color-ink); // unchanged in all interaction states
   }
 </style>
