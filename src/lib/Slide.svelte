@@ -208,7 +208,7 @@
       overflow: visible;
     }
     .title {
-      text-align: left;
+      text-align: center; // centred above the line on mobile
       padding-right: 0;
       font-size: 1.875rem; // ~30px
       white-space: normal;
@@ -244,6 +244,7 @@
       padding-right: 0;
       font-size: 1rem; // ~16px body
       min-width: 0;
+      text-align: center; // centre the content text below the line on mobile
     }
     .content.scrollable {
       flex: 1;

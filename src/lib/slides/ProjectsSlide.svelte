@@ -311,9 +311,11 @@
     .project {
       font-size: 1rem; // ~16px body
     }
+    // each project = ONE horizontal row (name + badges); rows stay left-aligned
+    // (a wide name+badge row reads better flush-left than centred, and long ones
+    // scroll sideways). Only the short-text slides (Welcome/Skills/About) centre.
     .row {
       flex-wrap: nowrap; // keep name + badges on one line
-      width: 100%;
       max-width: 100%;
       overflow-x: auto; // overflowing badges scroll sideways instead of wrapping
       overflow-y: hidden;

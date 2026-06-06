@@ -264,16 +264,40 @@
 
   // ---------------------------------------------------------------------------
   // MOBILE (≤768px): HORIZONTAL split — each slide draws its OWN horizontal
-  // separator line (title above / content below; see Slide.svelte). So the
-  // Shell's fixed VERTICAL divider + its inner scroll-indicator are hidden here.
-  // Every decorative element (left wall, the "+", left/bottom-left dots, sticks)
-  // is scaled down — kept, not removed.
+  // separator line (title above / content below; see Slide.svelte). The Shell's
+  // VERTICAL divider line is hidden, but its inner scroll-indicator is KEPT and
+  // turned HORIZONTAL: it overlays the per-slide line at screen centre and slides
+  // left / middle / right to show which slide is active. Decorative elements are
+  // scaled down — kept, not removed.
   // ---------------------------------------------------------------------------
   @media (max-width: 768px) {
-    // hide the fixed vertical divider + indicator — the per-slide horizontal
-    // line replaces them. (App's mobile load branch skips animating the divider.)
-    .divider-anchor {
+    // keep the anchor (it holds the indicator), hide only the vertical line.
+    .center-divider {
       display: none;
+    }
+
+    // the inner indicator becomes a short HORIZONTAL segment centred on the
+    // per-slide separator line; it slides left/centre/right per active slide.
+    // Its length = 1/3 of the line span (screen width minus the 1.5rem gutters).
+    .inner-line {
+      --span: calc(100vw - 3rem);
+      --seg: calc(var(--span) / 3);
+      --half: calc(var(--span) / 2 - var(--seg) / 2 - 5px);
+
+      width: var(--seg);
+      height: 4px; // slightly thicker than the line so it reads on top
+      background-color: var(--color-bg);
+      // bright cap on the ink line; centre then offset horizontally per position
+      transform: translate(-50%, -50%);
+    }
+    .inner-line[data-pos='top'] {
+      transform: translate(-50%, -50%) translateX(calc(var(--half) * -1));
+    }
+    .inner-line[data-pos='middle'] {
+      transform: translate(-50%, -50%);
+    }
+    .inner-line[data-pos='bottom'] {
+      transform: translate(-50%, -50%) translateX(var(--half));
     }
 
     // slimmer left edge wall

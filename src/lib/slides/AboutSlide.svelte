@@ -38,12 +38,16 @@
     font-weight: 300;
   }
 
-  // MOBILE (≤768px): shrink to the ~16px body scale + tighter row gap; the
-  // location pin + social icons scale down too.
+  // MOBILE (≤768px): shrink to the ~16px body scale + tighter row gap; centre
+  // each row; the location pin + social icons scale down too.
   @media (max-width: 768px) {
     .list {
       font-size: 1rem; // ~16px body
       gap: 0.7rem;
+      align-items: center;
+    }
+    li {
+      justify-content: center;
     }
     .pin {
       width: 1.1rem;

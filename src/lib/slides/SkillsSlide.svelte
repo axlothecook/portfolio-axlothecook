@@ -32,11 +32,14 @@
     font-weight: 500;
   }
 
-  // MOBILE (≤768px): shrink to the ~16px body scale + tighter row gap.
+  // MOBILE (≤768px): shrink to the ~16px body scale + tighter row gap; centre
+  // each skill line (text is centred via .content in Slide; align the items too).
   @media (max-width: 768px) {
     .list {
       font-size: 1rem; // ~16px body
       gap: 0.7rem;
+      align-items: center;
+      text-align: center;
     }
   }
 </style>

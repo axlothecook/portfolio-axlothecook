@@ -55,6 +55,10 @@
   // Shrink to the researched mobile type scale (H2 ~24px, H3 ~20px, H4 ~17px) and
   // allow wrapping if a line still doesn't fit beside the divider.
   @media (max-width: 768px) {
+    .tagline {
+      align-items: center; // centre the tagline rows on mobile
+      text-align: center;
+    }
     .line {
       white-space: normal;
     }
