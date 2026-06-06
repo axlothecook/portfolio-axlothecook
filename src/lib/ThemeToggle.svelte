@@ -49,6 +49,8 @@
 </button>
 
 <style lang="scss">
+  @use '../styles/responsive' as r; // lib-backed breakpoint mixins
+
   // The track: a full pill. Knob is inset with even padding all around.
   .switch {
     --track-w: 52px;
@@ -92,7 +94,7 @@
 
   // MOBILE (≤768px): shrink the whole switch — the knob + slide math derive from
   // these three vars, so overriding them scales it down proportionally.
-  @media (max-width: 768px) {
+  @include r.mobile {
     .switch {
       --track-w: 40px;
       --track-h: 20px;

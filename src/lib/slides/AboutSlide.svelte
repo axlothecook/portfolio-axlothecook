@@ -27,6 +27,8 @@
 </Slide>
 
 <style lang="scss">
+  @use '../../styles/responsive' as r; // lib-backed breakpoint mixins
+
   .list {
     list-style: none;
     margin: 0;
@@ -42,7 +44,7 @@
   // is centred as a BLOCK (fit-content + margin auto) with rows LEFT-aligned, so
   // every row STARTS at the same vertical line (like the Projects list), rather
   // than each row centring to a different start point.
-  @media (max-width: 768px) {
+  @include r.mobile {
     .list {
       font-size: 1rem; // ~16px body
       gap: 0.7rem;

@@ -242,6 +242,8 @@
 {/if}
 
 <style lang="scss">
+  @use '../../styles/responsive' as r; // lib-backed breakpoint mixins
+
   .list {
     list-style: none;
     margin: 0;
@@ -362,7 +364,7 @@
   // project is ONE horizontal row — name then its badges on a single line. If a
   // long badge list overflows, that row scrolls SIDEWAYS (no wrapping into many
   // rows, which was the visual clutter). Body ~16px.
-  @media (max-width: 768px) {
+  @include r.mobile {
     // centre the list as a BLOCK (its widest row defines the block; rows align to
     // that block's left edge — so the group is centred under the line while each
     // row's text stays left-aligned).

@@ -151,8 +151,8 @@ field. Implement as an on-hover popover near the project row.
 
 ## Animations summary
 
-- `+` mark: TODO restyle — current build is a plain thin cross; the Figma `+`
-  has **thicker legs with rounded edges**. Polish the look later.
+- `+` mark: DONE — a filled cross with rounded ends (the earlier plain thin-cross
+  version is gone); reads as the thicker, rounded Figma `+`.
 - `+` mark: continuous spin (loop). Clearance vs the left bar VERIFIED by a
   temporary spin test — at `left: 3.75rem`, size 48px, it clears the 20px bar.
   Speed pattern (slow→fast→slow over ~3s) does not affect clearance.

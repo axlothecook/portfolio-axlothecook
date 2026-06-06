@@ -14,6 +14,8 @@
 </Slide>
 
 <style lang="scss">
+  @use '../../styles/responsive' as r; // lib-backed breakpoint mixins
+
   .list {
     list-style: none;
     margin: 0;
@@ -39,7 +41,7 @@
   // the list is a centred BLOCK with lines LEFT-aligned, so each skill line
   // starts at the SAME vertical point (like the Projects/About lists) instead of
   // each line centring to a different start.
-  @media (max-width: 768px) {
+  @include r.mobile {
     .list {
       font-size: 1rem; // ~16px body
       gap: 0.7rem;

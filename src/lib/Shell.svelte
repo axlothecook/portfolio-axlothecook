@@ -115,6 +115,8 @@
 </div>
 
 <style lang="scss">
+  @use '../styles/responsive' as r; // lib-backed breakpoint mixins
+
   .shell {
     position: relative;
     min-height: 100vh;
@@ -270,7 +272,7 @@
   // left / middle / right to show which slide is active. Decorative elements are
   // scaled down — kept, not removed.
   // ---------------------------------------------------------------------------
-  @media (max-width: 768px) {
+  @include r.mobile {
     // keep the anchor (it holds the indicator), hide only the vertical line.
     .center-divider {
       display: none;
