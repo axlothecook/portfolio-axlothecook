@@ -221,22 +221,32 @@
       display: none;
     }
 
-    // CONTENT — bottom half, top-aligned so it starts just below the centre line.
+    // CONTENT — fills the bottom-half grid track so its inner scroller can cap to
+    // that height and scroll. align-self:stretch (default) + height:100% +
+    // min-height:0 are what let overflow:auto actually engage inside a grid track.
     .content-col {
       grid-row: 3;
       width: 100%;
+      max-width: 100%;
+      min-width: 0; // don't let flex content widen the column past the grid track
       gap: 0.75rem;
       align-items: flex-start;
-      align-self: start;
-      min-height: 0; // allow the inner scroller to size within the half
+      height: 100%;
+      min-height: 0;
     }
     .content {
       padding-left: 0;
       padding-right: 0;
+      max-width: 100%;
+      min-width: 0; // allow the content to shrink to the column width
     }
-    // scrollable content fills its half and scrolls internally if it overflows.
+    // scrollable content fills the col (flex:1) and scrolls internally if the
+    // list is taller than the bottom half. min-height:0 is required for the
+    // flex child to be allowed to shrink below its content size.
     .content.scrollable {
+      flex: 1;
       height: auto;
+      min-height: 0;
       max-height: 100%;
       overflow-y: auto;
       cursor: default;

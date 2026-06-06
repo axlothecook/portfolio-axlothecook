@@ -302,4 +302,20 @@
       height: 100%;
     }
   }
+
+  // MOBILE (≤768px): a project's name + badges can be wider than the narrow
+  // content column. Let the row WRAP (badges flow under the name) and let the
+  // badge cluster ITSELF wrap, so a long badge list flows onto multiple lines
+  // and never overflows the column / screen.
+  @media (max-width: 768px) {
+    .row {
+      flex-wrap: wrap;
+      width: 100%;
+      max-width: 100%;
+    }
+    .tech {
+      flex-wrap: wrap;
+      row-gap: 0.4rem;
+    }
+  }
 </style>
