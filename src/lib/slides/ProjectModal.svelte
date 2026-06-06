@@ -64,15 +64,16 @@
     animation: backdrop-in 0.18s ease;
   }
 
-  // the card itself — fixed light (#eee) surface regardless of theme.
+  // the card follows the theme: page bg + ink (light card in light mode, dark
+  // card in dark mode), so it switches with the dark/light toggle.
   .modal {
     position: relative;
     width: 100%;
     max-width: 22rem;
     box-sizing: border-box;
     padding: 1.5rem 1.25rem 1.25rem;
-    background-color: #eee;
-    color: #1e1f1c; // dark ink on the light card
+    background-color: var(--color-bg);
+    color: var(--color-ink);
     border-radius: 0.9rem;
     box-shadow: 0 12px 40px rgba(0, 0, 0, 0.3);
     animation: modal-in 0.2s ease;
@@ -90,7 +91,7 @@
     padding: 0;
     border: none;
     background: transparent;
-    color: #1e1f1c;
+    color: var(--color-ink);
     cursor: pointer;
     border-radius: 50%;
     -webkit-tap-highlight-color: transparent;
@@ -104,7 +105,8 @@
       fill: none;
     }
     &:hover {
-      background-color: rgba(0, 0, 0, 0.08);
+      // subtle ink overlay that works in both themes
+      background-color: color-mix(in srgb, var(--color-ink) 10%, transparent);
     }
   }
 
@@ -127,6 +129,8 @@
     gap: 0.6rem;
   }
 
+  // buttons are INVERTED vs the card (ink fill, bg-coloured text) so they read as
+  // solid buttons in both themes and flip with the card.
   .btn {
     flex: 1;
     text-align: center;
@@ -134,8 +138,8 @@
     border-radius: 0.5rem;
     font-size: 0.95rem;
     text-decoration: none;
-    background-color: #1e1f1c;
-    color: #eee;
+    background-color: var(--color-ink);
+    color: var(--color-bg);
     -webkit-tap-highlight-color: transparent;
 
     &:active {
