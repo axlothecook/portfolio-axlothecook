@@ -210,12 +210,15 @@
     .title {
       text-align: center; // centred above the line on mobile
       padding-right: 0;
-      font-size: 1.875rem; // ~30px
+      font-size: 2.25rem; // up from 1.875rem (data-slide titles)
       white-space: normal;
       line-height: 1.1;
     }
+    // the Welcome hero title runs bigger — there's room on the front page; push it
+    // toward the desktop scale (still capped so it doesn't wrap on 375px).
     .title.hero {
-      font-size: 2.25rem; // ~36px hero
+      font-size: 4.25rem; // big hero presence on the front page
+      font-weight: 500; // heavier, closer to desktop hero presence
     }
 
     // SPACER becomes the horizontal separator line itself (the Shell's fixed

@@ -300,11 +300,15 @@
     const dot = mobileDotEl
 
     const DOT = 12 // dot diameter (px)
-    const dropFrom = -(window.innerHeight / 2 + 60) // off-screen above centre
 
-    // the FINAL line geometry (so the dot grows to exactly match the real .spacer
-    // that lives in the Welcome grid). Measure the spacer's slot.
+    // the FINAL line geometry + POSITION (so the dot grows to exactly match — and
+    // lands exactly ON — the real .spacer in the Welcome grid). The dot is anchored
+    // at top:50% (viewport centre); restY shifts it onto the line's real centre so
+    // the hand-off doesn't jump (the grid line isn't exactly at viewport centre).
+    const lineRect = line?.getBoundingClientRect()
     const lineW = line?.offsetWidth || window.innerWidth - 48
+    const restY = lineRect ? lineRect.top + lineRect.height / 2 - window.innerHeight / 2 : 0
+    const dropFrom = restY - (window.innerHeight / 2 + 60) // off-screen above the rest spot
 
     // initial states: furniture/sticks/text hidden. The real per-slide line stays
     // hidden until the dot finishes forming, then we reveal it + remove the dot —
@@ -327,15 +331,17 @@
     })
 
     if (dot) {
-      // 1) the dot drops from off-screen onto the MIDDLE of the screen
-      tl.to(dot, { y: 0, duration: 0.6, ease: 'power2.in' })
+      // 1) the dot drops from off-screen onto the LINE'S rest spot (= where the
+      //    real .spacer sits, so the later hand-off doesn't jump)
+      tl.to(dot, { y: restY, duration: 0.6, ease: 'power2.in' })
       // 2) one small bounce
-      tl.to(dot, { y: -44, duration: 0.32, ease: 'power2.out' })
-      tl.to(dot, { y: 0, duration: 0.28, ease: 'power2.in' })
+      tl.to(dot, { y: restY - 44, duration: 0.32, ease: 'power2.out' })
+      tl.to(dot, { y: restY, duration: 0.28, ease: 'power2.in' })
       // 3) splash squash, then stretch SIDEWAYS (centred) into the full line width
       tl.to(dot, { width: DOT + 6, height: DOT - 5, duration: 0.1, ease: 'power2.out' })
       tl.to(dot, { width: lineW, height: 4, duration: 0.55, ease: 'power3.inOut' })
-      // 4) hand off: reveal the real per-slide line, hide the intro dot
+      // 4) hand off: reveal the real per-slide line, hide the intro dot. They're at
+      //    the SAME position now, so there's no visible jump.
       tl.add(() => {
         if (line) gsap.set(line, { autoAlpha: 1 })
         gsap.set(dot, { autoAlpha: 0 })
@@ -369,22 +375,19 @@
         gsap.delayedCall(i * 0.35, () => startDotBounce(dot))
       })
     }
-    // the bottom-left dot stack does a continuous staggered WAVE bob — each dot
-    // lifts + settles a beat after the one above it, looping forever (not a
-    // single stuck dot).
+    // the bottom-left dot stack runs the REAL perpetual Newton's-cradle loop (the
+    // same one the desktop wizard sets up): top ball drops, the impulse passes
+    // down through the chain, the bottom ball dips + returns, the impulse passes
+    // back up, the top ball rises to its peak — forever. Rests are 0 (at-rest).
     if (bottomDotsEl) {
       const dots = Array.from(bottomDotsEl.querySelectorAll('.dot')) as HTMLElement[]
-      dots.forEach((dot, i) => {
-        gsap.to(dot, {
-          y: -7,
-          duration: 0.5,
-          ease: 'sine.inOut',
-          yoyo: true,
-          repeat: -1,
-          delay: i * 0.18, // stagger down the stack → travelling wave
-          repeatDelay: (dots.length - 1) * 0.18, // pause so the wave restarts cleanly
-        })
-      })
+      if (dots.length === 4) {
+        const rests = dots.map(() => 0)
+        // pre-lift the top ball to its peak so the first drop starts from there
+        // (matches startNewtonsCradle's expectation), then start the loop.
+        gsap.set(dots[0], { y: -NEWTON_TOP_LIFT })
+        startNewtonsCradle(dots, rests)
+      }
     }
   }
 

@@ -54,22 +54,27 @@
   // MOBILE (≤768px): the tagline rows are too wide for a phone at desktop sizes.
   // Shrink to the researched mobile type scale (H2 ~24px, H3 ~20px, H4 ~17px) and
   // allow wrapping if a line still doesn't fit beside the divider.
+  // MOBILE (≤768px): the tagline can run bigger than the earlier conservative
+  // sizes — there's vertical room on the Welcome slide. Push toward the desktop
+  // scale (kept a step smaller so the rows don't wrap on a 375px screen). Weights
+  // inherit the bumped 600/500/300 from the base rules.
   @media (max-width: 768px) {
     .tagline {
       align-items: center; // centre the tagline rows on mobile
       text-align: center;
+      gap: 0.5rem;
     }
     .line {
       white-space: normal;
     }
     .line-1 {
-      font-size: 1.5rem; // ~24px (H2)
+      font-size: 2.75rem;
     }
     .line-2 {
-      font-size: 1.25rem; // ~20px (H3)
+      font-size: 2.1rem;
     }
     .line-3 {
-      font-size: 1.0625rem; // ~17px (H4)
+      font-size: 1.6rem;
     }
   }
 </style>
