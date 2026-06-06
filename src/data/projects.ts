@@ -33,7 +33,9 @@ export type Tech =
 export interface Project {
   name: string
   tech: Tech[]
-  summary: string // hover popup — one sentence max
+  summary: string // hover popup text (one or two short sentences)
+  liveUrl?: string // link to the deployed site (omit if not deployed / no demo)
+  repoUrl?: string // link to the GitHub repo (omit if not public yet)
   // Per-project override for a badge's tooltip/aria label. Used when one icon
   // stands in for more than one tool in a project (e.g. Cloudflare covering both
   // Cloudflare and Turnstile), so the single badge can carry the merged label.
@@ -51,29 +53,39 @@ export const projects: Project[] = [
     // onto it via techLabels (below).
     tech: ['TS', 'Svelte', 'Sass', 'Express', 'Prisma', 'PostgreSQL', 'Cloudflare', 'GoogleTranslate', 'Brevo'],
     techLabels: { Cloudflare: 'Cloudflare (incl. Turnstile)' },
+    // summary describes WHAT the project is; the tech badges cover the stack, so
+    // no tool names here (CI/CD is kept as a concept, not a tool). The "Live" /
+    // "Code" links are rendered from liveUrl/repoUrl, not written in the summary.
     summary:
-      'Full-stack club website (SvelteKit + TypeScript/Express/Prisma/Postgres), self-hosted on my own Raspberry Pi through a custom CI/CD pipeline.',
+      'A full-stack website built for adoption by an official archery club in Croatia, with a public site and a private dashboard for admins. Self-hosted on a Pi through a containerised custom CI/CD pipeline.',
+    // liveUrl + repoUrl pending (not deployed yet / repo link to be provided).
   },
   {
     name: 'Gaming Shop',
     // Docker Compose + GitHub Actions CI/CD + GHCR + Cloudflare Tunnel, self-hosted on a Pi.
     tech: ['TS', 'Svelte', 'Sass', 'Express', 'MongoDB', 'Docker', 'GitHubActions', 'Cloudflare', 'RaspberryPi'],
     summary:
-      'An e-commerce shop deployed to my own Raspberry Pi via Docker, a GitHub Actions CI/CD pipeline and a Cloudflare Tunnel.',
+      'A full-stack e-commerce shop demo. Self-hosted on a Pi through a containerised custom CI/CD pipeline.',
+    liveUrl: 'https://gameshop.axlothecook.com',
+    // repoUrl pending (to be provided).
   },
   {
     name: 'Google Drive Clone',
     // Small-Google-Drive: Express + Prisma + Postgres + Supabase storage + Passport auth.
     tech: ['JS', 'Express', 'Prisma', 'PostgreSQL', 'Supabase'],
     summary:
-      'A Google-Drive-style file manager with authentication and cloud storage, built on Express, Prisma/PostgreSQL and Supabase.',
+      'A Google-Drive-style file manager with user authentication and cloud file storage.',
+    liveUrl: 'https://small-google-drive-production.up.railway.app/',
+    repoUrl: 'https://github.com/axlothecook/Small-Google-Drive',
   },
   {
     name: 'CV Maker',
     // Create_Resume: React + MUI FE, Express + Mongo BE, auth, PDF export; Pi + CI/CD.
     tech: ['JS', 'React', 'MUI', 'Express', 'MongoDB', 'Docker', 'RaspberryPi'],
     summary:
-      'A drag-and-drop résumé builder with live PDF export (React + MUI, Express + MongoDB), self-hosted on a Raspberry Pi.',
+      'A full-stack résumé builder with live PDF export used to create professional CVs with user authentication. Self-hosted on a Pi through a containerised custom CI/CD pipeline.',
+    liveUrl: 'https://editcv.netlify.app',
+    repoUrl: 'https://github.com/axlothecook/Create_Resume',
   },
   {
     name: 'Sass Library',
@@ -81,7 +93,9 @@ export const projects: Project[] = [
     // consumed by Archery FE, Gaming Shop FE, and this portfolio.
     tech: ['Sass', 'Gulp', 'CSS3'],
     summary:
-      'A reusable SCSS component library (my own Tailwind/Bootstrap alternative), published on GitHub and used across my projects.',
+      'A reusable component & utility library (my own styling-framework alternative), published and used across my projects.',
+    // no live demo (it's a library); repo only.
+    repoUrl: 'https://github.com/axlothecook/axlothecook-sass-library',
   },
   {
     name: 'CityWeather',
@@ -89,20 +103,24 @@ export const projects: Project[] = [
     // GoogleMaps + YouTube have logos; the generic API badge covers Visual Crossing.
     tech: ['JS', 'React', 'GoogleMaps', 'YouTube', 'API'],
     summary:
-      'A weather dashboard orchestrating multiple third-party APIs (Visual Crossing, Google Places/Maps, YouTube) with charts and motion.',
+      'A weather dashboard displaying data amongst which are images and walking tours of searched places, interactive charts and motion. Delivered through multiple APIs, like Visual Crossing.',
+    liveUrl: 'https://cityweatherforecastapp.netlify.app',
+    repoUrl: 'https://github.com/axlothecook/CityWeather',
   },
   {
     name: 'Memory Game',
     // ArknightsMemoryCardGame: React 19 + Tailwind + Vite + parallax tilt + remote image fetch.
     tech: ['JS', 'React', 'Tailwind', 'API'],
     summary:
-      'An animated memory card game (React + Tailwind) that fetches character art remotely, with parallax-tilt card effects.',
+      'An animated memory card game that fetches character art remotely, with parallax-tilt card effects.',
+    liveUrl: 'https://arknightsmemorycardgame.netlify.app/',
+    repoUrl: 'https://github.com/axlothecook/ArknightsMemoryCardGame',
   },
   {
     name: 'Linux Ricing',
     // creative/personal — Pop!_OS + Arch desktop customization.
     tech: ['PopOS', 'Arch'],
-    summary: 'Custom Linux desktop setups (Pop!_OS and Arch) — an ongoing creative/configuration hobby.',
+    summary: 'Custom Linux desktop setups (Pop!_OS and Arch); an ongoing creative/configuration hobby.',
     ongoing: true,
   },
 ]
