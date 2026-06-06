@@ -1,16 +1,21 @@
 # portfolio-axlothecook
 
-My personal portfolio website. A static, no-backend site that displays my
-**skills, projects, education, and experience** — with a Three.js render
-planned as a later addition.
+My personal portfolio website. A static, no-backend, **single-page slide-based**
+site (Welcome → Projects → Skills & Tools → About) that displays my projects,
+skills, and background. It opens with a GSAP "wizard" load animation that builds
+the page furniture, and has a light/dark theme toggle plus a placeholder
+"Animated" mode (a richer Three.js-style render planned for later).
 
 **Live (planned):** https://portfolio.axlothecook.com
 
 ## Design
 
-The website follows this Figma sketch:
+The website follows this Figma design:
 
-- **Figma:** https://www.figma.com/design/Yc4OGKSCCefIzgg2P9tXu6/Portfolio-Website?node-id=0-1&p=f&t=zlR7xG7nocVrjL9N-0
+- **Figma:** https://www.figma.com/design/Yc4OGKSCCefIzgg2P9tXu6/Portfolio-Website?node-id=3-73&t=ALfNXldsPVyxVNo5-0
+
+A fuller written spec (slide content, fixed shell, animations, colours) lives in
+[`docs/design-spec.md`](docs/design-spec.md).
 
 ## Tech stack
 
@@ -61,8 +66,12 @@ npm run check    # svelte-check + tsc type checking
 
 ## TODO
 
-- [ ] Build sections from the Figma design (hero, skills, projects, education, experience, footer).
-- [ ] Three.js render.
+- [x] Welcome load animation (GSAP), light/dark theme toggle, placeholder Animated mode.
+- [x] Slides built from typed data (`src/data/{projects,skills,about}.ts`) + monochrome tech-icon components.
+- [ ] Project hover popup with a one-line summary + live/repo links.
+- [ ] Make everything responsive / mobile-friendly.
+- [ ] Maximize use of the `axlothecook-sass-library` (beyond plain CSS).
+- [ ] Three.js render for the "Animated" mode.
 - [ ] Trim the library CSS bundle (currently the whole library ships, ~2.5 MB)
       via PurgeCSS or by importing only the partials actually used.
 - [ ] Deploy to `portfolio.axlothecook.com`.
