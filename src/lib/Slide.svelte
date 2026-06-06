@@ -273,7 +273,7 @@
     // overflow-driven scroll hint keeps working.
     .content-col.compact .content.scrollable {
       flex: 0 1 auto;
-      max-height: 42%; // a few more rows before it scrolls
+      max-height: 52%; // a few more rows before it scrolls
     }
     // wider gap between the (compact) content and the scroll hint below it
     .content-col.compact .hint-slot {

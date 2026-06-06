@@ -4,6 +4,15 @@
   import { projects } from '../../data/projects'
   import { techIcons } from '../icons'
   import ProjectPopup from './ProjectPopup.svelte'
+  import ProjectModal from './ProjectModal.svelte'
+
+  // ≤768px = mobile: a tap opens a MODAL (not the hover popup, which is desktop).
+  const isMobile = () =>
+    typeof window !== 'undefined' && window.matchMedia('(max-width: 768px)').matches
+
+  // which project's modal is open on mobile (null = none).
+  let modalIndex = $state<number | null>(null)
+  const modalProject = $derived(modalIndex != null ? projects[modalIndex] : null)
 
   // The popup is rendered ONCE as a position:fixed layer (not inside each row),
   // so it can NEVER be clipped by the scrollable content box's overflow. Its
@@ -115,7 +124,12 @@
   }
   function onRowPointerUp(e: PointerEvent, index: number) {
     if (e.pointerType !== 'touch' && e.pointerType !== 'pen') return // mouse uses hover
-    toggle(index)
+    if (isMobile()) {
+      hovered = null // no inline popup on mobile
+      modalIndex = index // open the modal instead
+    } else {
+      toggle(index)
+    }
   }
   function onRowEnter(index: number) {
     if (lastWasTouch) return // ignore the synthetic hover a tap fires
@@ -213,6 +227,18 @@
   >
     <ProjectPopup summary={current.summary} liveUrl={current.liveUrl} repoUrl={current.repoUrl} />
   </div>
+{/if}
+
+<!-- MOBILE: a tap opens this modal (X close, blurred backdrop, #eee card) with
+     the same summary + Live/Code buttons. Desktop uses the hover popup above. -->
+{#if modalProject}
+  <ProjectModal
+    name={modalProject.name}
+    summary={modalProject.summary}
+    liveUrl={modalProject.liveUrl}
+    repoUrl={modalProject.repoUrl}
+    onClose={() => (modalIndex = null)}
+  />
 {/if}
 
 <style lang="scss">

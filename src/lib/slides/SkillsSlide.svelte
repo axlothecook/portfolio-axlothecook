@@ -36,12 +36,18 @@
   // each skill line. (The ~20% height shorten is done on Slide's
   // .content.scrollable so it stays the single scroller — which keeps the scroll
   // hint working, since the hint watches that element for overflow.)
+  // the list is a centred BLOCK with lines LEFT-aligned, so each skill line
+  // starts at the SAME vertical point (like the Projects/About lists) instead of
+  // each line centring to a different start.
   @media (max-width: 768px) {
     .list {
       font-size: 1rem; // ~16px body
       gap: 0.7rem;
-      align-items: center;
-      text-align: center;
+      width: fit-content;
+      max-width: 100%;
+      margin-inline: auto;
+      align-items: flex-start;
+      text-align: left;
     }
   }
 </style>
