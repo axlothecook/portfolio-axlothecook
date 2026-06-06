@@ -1,17 +1,21 @@
 // Portfolio custom styles entry.
 //
-// Per the axlothecook-sass-library README: override the library's SCSS
-// variables ($primary, $base-padding, $text, the $colors map, etc.) HERE,
-// ABOVE the @import, then import the library so the overrides take effect.
+// NOTE: we deliberately do NOT @import the whole axlothecook-sass-library
+// `index.scss` — that ships ~2.5 MB of generated utility classes + components
+// the portfolio never uses (its theme is the CSS custom properties below; its
+// only library dependency is the BREAKPOINT mixins, pulled in per-component via
+// `_responsive.scss`, which @use the library's `breakpoints` partial directly
+// and emit no CSS until a mixin is invoked). Skipping the full import is the
+// CSS-bundle trim: 2.5 MB → a few KB of our own styles.
 
-// ---------------------------------------------------------------------------
-// Library variable overrides (must come BEFORE the @import).
-// These feed the library's base styles + generated colour utilities.
-// ---------------------------------------------------------------------------
-$light-bg-primary: #ececec; // page background
-$text: #34302d; // ink (body text)
-
-@import 'axlothecook-sass-library/sass-library/index.scss';
+// Minimal global reset (the bit of the library's _base we actually relied on:
+// border-box sizing + zeroed margins). Components that need it also set it
+// locally, but this keeps the global default consistent.
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
 
 // ---------------------------------------------------------------------------
 // Palette as CSS custom properties — the single control panel for the theme.
