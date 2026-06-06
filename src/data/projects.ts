@@ -34,6 +34,10 @@ export interface Project {
   name: string
   tech: Tech[]
   summary: string // hover popup — one sentence max
+  // Per-project override for a badge's tooltip/aria label. Used when one icon
+  // stands in for more than one tool in a project (e.g. Cloudflare covering both
+  // Cloudflare and Turnstile), so the single badge can carry the merged label.
+  techLabels?: Partial<Record<Tech, string>>
   ongoing?: boolean
 }
 
@@ -42,7 +46,11 @@ export const projects: Project[] = [
     name: 'Archery Club',
     // flagship full-stack: SvelteKit FE + TS/Express/Prisma/Postgres BE + Cloudflare R2,
     // self-hosted on a Raspberry Pi via a custom CI/CD pipeline.
-    tech: ['TS', 'Svelte', 'Sass', 'Express', 'Prisma', 'PostgreSQL', 'Cloudflare', 'GoogleTranslate', 'Brevo', 'Turnstile'],
+    // Turnstile IS Cloudflare and reuses the same icon, so listing both rendered
+    // the Cloudflare mark twice. Keep ONE Cloudflare badge and merge both labels
+    // onto it via techLabels (below).
+    tech: ['TS', 'Svelte', 'Sass', 'Express', 'Prisma', 'PostgreSQL', 'Cloudflare', 'GoogleTranslate', 'Brevo'],
+    techLabels: { Cloudflare: 'Cloudflare (incl. Turnstile)' },
     summary:
       'Full-stack club website (SvelteKit + TypeScript/Express/Prisma/Postgres), self-hosted on my own Raspberry Pi through a custom CI/CD pipeline.',
   },

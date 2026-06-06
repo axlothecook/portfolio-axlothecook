@@ -13,7 +13,10 @@
         <span class="tech">
           {#each project.tech as t}
             {@const icon = techIcons[t]}
-            <span class="badge" title={icon.label} aria-label={icon.label}>
+            <!-- a project may override a badge's label (e.g. Archery's single
+                 Cloudflare badge carries the merged Cloudflare + Turnstile text) -->
+            {@const label = project.techLabels?.[t] ?? icon.label}
+            <span class="badge" title={label} aria-label={label}>
               <!-- size="100%" → the SVG fills the fixed square badge box, which is
                    what actually centres every icon uniformly (see .badge styles) -->
               <icon.component size="100%" />
