@@ -72,9 +72,9 @@ npm run check    # svelte-check + tsc type checking
       tap-to-open modal (mobile).
 - [x] Responsive / mobile-friendly: horizontal-split layout, swipe slides, mobile
       load intro, sized/centred text, scroll hints, project modal.
-- [ ] Maximize use of the `axlothecook-sass-library` (beyond plain CSS).
-- [ ] Three.js render for the "Animated" mode.
-- [ ] Restyle the `+` mark (Figma has thicker legs with rounded edges; current is a plain cross).
+- [x] Maximize use of the `axlothecook-sass-library` — all media queries now go
+      through its breakpoint mixins (`src/styles/_responsive.scss`).
+- [ ] Three.js render for the "Animated" mode (post-launch).
 - [ ] Trim the library CSS bundle (currently the whole library ships, ~2.5 MB)
       via PurgeCSS or by importing only the partials actually used.
 - [ ] Deploy to `portfolio.axlothecook.com`.
