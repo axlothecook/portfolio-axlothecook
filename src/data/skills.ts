@@ -22,7 +22,7 @@ export const skills: SkillGroup[] = [
   { label: 'Deployment', items: 'Docker & Compose, GitHub Actions, GHCR, Docker Buildx (multi-arch), Tailscale, SSH, Railway, Netlify' },
   { label: 'Cloud & storage', items: 'AWS S3 SDK, Cloudflare R2 & Tunnel, Supabase, Raspberry Pi (self-hosted)' },
   { label: 'Architecture', items: 'Shared-types package (monorepo-style), full-stack TypeScript, i18n' },
-  { label: 'Testing', items: 'Unit & integration testing, E2E — Vitest, Jest, React Testing Library, Playwright, Supertest' },
+  { label: 'Testing', items: 'Unit, integration & E2E testing: Vitest, Jest, React Testing Library, Playwright, Supertest' },
   { label: 'APIs / services', items: 'Google Cloud Translation, Visual Crossing, Google Places / Maps, YouTube, Brevo (email), Chart.js' },
   { label: 'Build tools', items: 'Vite, Webpack, esbuild, Gulp, npm' },
   { label: 'Tooling', items: 'Git & GitHub, ESLint, Prettier, Claude / Claude Code' },
