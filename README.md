@@ -10,9 +10,8 @@ the page furniture, and has a light/dark theme toggle plus a placeholder
 
 ## Design
 
-The website follows this Figma design:
-
-- **Figma:** https://www.figma.com/design/Yc4OGKSCCefIzgg2P9tXu6/Portfolio-Website?node-id=3-73&t=ALfNXldsPVyxVNo5-0
+[Click here](https://www.figma.com/design/Yc4OGKSCCefIzgg2P9tXu6/Portfolio-Website?node-id=3-73&t=ALfNXldsPVyxVNo5-0)
+to view the Figma design for this website.
 
 A fuller written spec (slide content, fixed shell, animations, colours) lives in
 [`docs/design-spec.md`](docs/design-spec.md).
