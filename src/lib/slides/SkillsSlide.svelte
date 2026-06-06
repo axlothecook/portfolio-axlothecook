@@ -7,7 +7,7 @@
   <ul class="list">
     {#each skills as group}
       <li class="line">
-        {#if group.label}<span class="label">{group.label}:</span> {/if}{group.items}
+        {#if group.label}<span class="label">{group.label}:&nbsp;</span>{/if}{group.items}
       </li>
     {/each}
   </ul>

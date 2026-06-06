@@ -1,6 +1,7 @@
 <script lang="ts">
   import Slide from '../Slide.svelte'
   import { projects } from '../../data/projects'
+  import { techIcons } from '../icons'
 </script>
 
 <Slide title="Projects" scrollable>
@@ -10,7 +11,12 @@
         <span class="name">{project.name}</span>
         {#if project.ongoing}<span class="ongoing">(ongoing)</span>{/if}
         <span class="tech">
-          {#each project.tech as t}<span class="badge">{t}</span>{/each}
+          {#each project.tech as t}
+            {@const icon = techIcons[t]}
+            <span class="badge" title={icon.label} aria-label={icon.label}>
+              <icon.component size="1em" />
+            </span>
+          {/each}
         </span>
       </li>
     {/each}
@@ -43,15 +49,16 @@
 
   .tech {
     display: inline-flex;
-    gap: 0.3rem;
+    align-items: center;
+    gap: 0.5rem;
   }
 
-  // Temporary text badges — the real tech icons come later.
+  // Monochrome tech icons (each is its own component using currentColor, so they
+  // follow the theme ink — brown in light mode, white in dark mode).
   .badge {
-    font-size: 0.7rem;
-    padding: 0.1rem 0.35rem;
-    border: 1px solid var(--color-ink);
-    border-radius: 4px;
-    opacity: 0.8;
+    display: inline-flex;
+    align-items: center;
+    color: var(--color-ink);
+    opacity: 0.85;
   }
 </style>

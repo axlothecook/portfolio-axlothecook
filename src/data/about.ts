@@ -8,11 +8,15 @@ export interface About {
   contact: string
   occupation: string
   education: string
+  github: string
+  linkedin: string
 }
 
 export const about: About = {
   location: 'Netherlands',
   contact: 'lana.segovic@gmail.com',
   occupation: 'Full stack developer',
-  education: 'self-taught',
+  education: 'The Odin Project',
+  github: 'https://github.com/axlothecook',
+  linkedin: 'https://www.linkedin.com/in/lanasegovic/',
 }
