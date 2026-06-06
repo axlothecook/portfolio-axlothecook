@@ -21,9 +21,9 @@
 
   // --- transition tuning ---
   // The text fades OUT first, THEN the next fades IN (sequenced, no overlap).
-  // Fade-in is slower than fade-out.
-  const FADE_OUT = 0.6
-  const FADE_IN = 1.1
+  // Fade-in is slower than fade-out. (Sped up slightly for snappier slide changes.)
+  const FADE_OUT = 0.45
+  const FADE_IN = 0.8
 
   let currentIndex = $state(0)
 

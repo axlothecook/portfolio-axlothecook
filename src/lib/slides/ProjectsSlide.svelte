@@ -104,6 +104,28 @@
     }
   }
 
+  // On TOUCH we drive the popup purely from the tap (pointerup toggles), and
+  // IGNORE the synthetic mouseenter/focusin a tap also fires — otherwise focusin
+  // would OPEN and the tap would immediately toggle it back off (the "first tap
+  // shows nothing" bug). `lastWasTouch` is set on POINTERDOWN (which fires BEFORE
+  // focusin) so the hover/focus handlers bail for the rest of that tap.
+  let lastWasTouch = false
+  function onRowPointerDown(e: PointerEvent) {
+    lastWasTouch = e.pointerType === 'touch' || e.pointerType === 'pen'
+  }
+  function onRowPointerUp(e: PointerEvent, index: number) {
+    if (e.pointerType !== 'touch' && e.pointerType !== 'pen') return // mouse uses hover
+    toggle(index)
+  }
+  function onRowEnter(index: number) {
+    if (lastWasTouch) return // ignore the synthetic hover a tap fires
+    open(index)
+  }
+  function onRowFocus(index: number) {
+    if (lastWasTouch) return // ignore the synthetic focus a tap fires
+    open(index)
+  }
+
   function onScrollOrResize() {
     if (hovered != null) position(hovered)
   }
@@ -147,11 +169,12 @@
           role="button"
           tabindex="0"
           bind:this={rowEls[i]}
-          onmouseenter={() => open(i)}
+          onmouseenter={() => onRowEnter(i)}
           onmouseleave={scheduleClose}
-          onfocusin={() => open(i)}
+          onfocusin={() => onRowFocus(i)}
           onfocusout={scheduleClose}
-          onclick={() => toggle(i)}
+          onpointerdown={onRowPointerDown}
+          onpointerup={(e) => onRowPointerUp(e, i)}
           onkeydown={(e) => (e.key === 'Enter' || e.key === ' ') && (e.preventDefault(), toggle(i))}
         >
           <span class="name">{project.name}</span>
@@ -219,6 +242,12 @@
     color: var(--color-ink);
     transition: color 0.15s ease;
     outline: none; // focus is signalled by the gold highlight + popup, not a ring
+    // touch polish: no blue tap-flash, no text selection / long-press callout on
+    // a tap (the row is a button, not selectable prose).
+    -webkit-tap-highlight-color: transparent;
+    user-select: none;
+    -webkit-user-select: none;
+    -webkit-touch-callout: none;
   }
 
   // Highlight the hovered/active row gold so it's clear which project's info is

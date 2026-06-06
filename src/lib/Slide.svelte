@@ -273,7 +273,11 @@
     // overflow-driven scroll hint keeps working.
     .content-col.compact .content.scrollable {
       flex: 0 1 auto;
-      max-height: 34%;
+      max-height: 42%; // a few more rows before it scrolls
+    }
+    // wider gap between the (compact) content and the scroll hint below it
+    .content-col.compact .hint-slot {
+      margin-top: 1.25rem;
     }
     // the content-col stacks the content over the hint on mobile (vs side-by-side
     // on desktop) so the scroll hint sits centred BELOW the scrollable content.

@@ -38,16 +38,22 @@
     font-weight: 300;
   }
 
-  // MOBILE (≤768px): shrink to the ~16px body scale + tighter row gap; centre
-  // each row; the location pin + social icons scale down too.
+  // MOBILE (≤768px): shrink to the ~16px body scale + tighter row gap. The list
+  // is centred as a BLOCK (fit-content + margin auto) with rows LEFT-aligned, so
+  // every row STARTS at the same vertical line (like the Projects list), rather
+  // than each row centring to a different start point.
   @media (max-width: 768px) {
     .list {
       font-size: 1rem; // ~16px body
       gap: 0.7rem;
-      align-items: center;
+      width: fit-content;
+      max-width: 100%;
+      margin-inline: auto;
+      align-items: flex-start;
+      text-align: left;
     }
     li {
-      justify-content: center;
+      justify-content: flex-start;
     }
     .pin {
       width: 1.1rem;
