@@ -109,7 +109,7 @@
   }
 
   .name {
-    margin: 0 1.5rem 0.6rem 0; // clear the X
+    margin: 0 1.5rem 1.1rem 0; // clear the X; wider gap before the description
     font-size: 1.4rem;
     font-weight: 500;
   }
@@ -122,7 +122,7 @@
   }
 
   .actions {
-    margin-top: 1.1rem;
+    margin-top: 1.75rem; // wider gap between the description and the buttons
     display: flex;
     gap: 0.6rem;
   }

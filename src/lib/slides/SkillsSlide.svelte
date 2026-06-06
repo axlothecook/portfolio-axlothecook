@@ -44,7 +44,9 @@
       font-size: 1rem; // ~16px body
       gap: 0.7rem;
       width: fit-content;
-      max-width: 100%;
+      // slightly narrower than full width so the skill text has a bit of side
+      // breathing room from the screen edges (the lines won't run edge-to-edge).
+      max-width: calc(100% - 2rem);
       margin-inline: auto;
       align-items: flex-start;
       text-align: left;
