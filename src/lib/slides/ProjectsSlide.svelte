@@ -4,6 +4,15 @@
   import { projects } from '../../data/projects'
   import { techIcons } from '../icons'
   import ProjectPopup from './ProjectPopup.svelte'
+  import ProjectModal from './ProjectModal.svelte'
+
+  // ≤768px = mobile: a tap opens a MODAL (not the hover popup, which is desktop).
+  const isMobile = () =>
+    typeof window !== 'undefined' && window.matchMedia('(max-width: 768px)').matches
+
+  // which project's modal is open on mobile (null = none).
+  let modalIndex = $state<number | null>(null)
+  const modalProject = $derived(modalIndex != null ? projects[modalIndex] : null)
 
   // The popup is rendered ONCE as a position:fixed layer (not inside each row),
   // so it can NEVER be clipped by the scrollable content box's overflow. Its
@@ -93,8 +102,57 @@
     }, 90)
   }
 
+  // Tap/click toggles the popup — this is how TOUCH devices (no hover) open it:
+  // tap a row to show its popup, tap again (or tap elsewhere) to dismiss.
+  function toggle(index: number) {
+    if (hovered === index) {
+      cancelClose()
+      hovered = null
+    } else {
+      open(index)
+    }
+  }
+
+  // On TOUCH we drive the popup purely from the tap (pointerup toggles), and
+  // IGNORE the synthetic mouseenter/focusin a tap also fires — otherwise focusin
+  // would OPEN and the tap would immediately toggle it back off (the "first tap
+  // shows nothing" bug). `lastWasTouch` is set on POINTERDOWN (which fires BEFORE
+  // focusin) so the hover/focus handlers bail for the rest of that tap.
+  let lastWasTouch = false
+  function onRowPointerDown(e: PointerEvent) {
+    lastWasTouch = e.pointerType === 'touch' || e.pointerType === 'pen'
+  }
+  function onRowPointerUp(e: PointerEvent, index: number) {
+    if (e.pointerType !== 'touch' && e.pointerType !== 'pen') return // mouse uses hover
+    if (isMobile()) {
+      hovered = null // no inline popup on mobile
+      modalIndex = index // open the modal instead
+    } else {
+      toggle(index)
+    }
+  }
+  function onRowEnter(index: number) {
+    if (lastWasTouch) return // ignore the synthetic hover a tap fires
+    open(index)
+  }
+  function onRowFocus(index: number) {
+    if (lastWasTouch) return // ignore the synthetic focus a tap fires
+    open(index)
+  }
+
   function onScrollOrResize() {
     if (hovered != null) position(hovered)
+  }
+
+  // Tap OUTSIDE a row or the popup dismisses it (touch devices, where there's no
+  // mouseleave). A row's own click is handled by toggle() and stops here via the
+  // target check.
+  function onDocPointerDown(e: PointerEvent) {
+    if (hovered == null) return
+    const t = e.target as HTMLElement
+    if (t.closest?.('.project') || t.closest?.('.popup-layer')) return
+    cancelClose()
+    hovered = null
   }
 
   onMount(() => {
@@ -103,9 +161,11 @@
     // popup while the list scrolls. Also re-track on viewport resize.
     window.addEventListener('scroll', onScrollOrResize, true)
     window.addEventListener('resize', onScrollOrResize)
+    document.addEventListener('pointerdown', onDocPointerDown)
     return () => {
       window.removeEventListener('scroll', onScrollOrResize, true)
       window.removeEventListener('resize', onScrollOrResize)
+      document.removeEventListener('pointerdown', onDocPointerDown)
     }
   })
 
@@ -123,10 +183,13 @@
           role="button"
           tabindex="0"
           bind:this={rowEls[i]}
-          onmouseenter={() => open(i)}
+          onmouseenter={() => onRowEnter(i)}
           onmouseleave={scheduleClose}
-          onfocusin={() => open(i)}
+          onfocusin={() => onRowFocus(i)}
           onfocusout={scheduleClose}
+          onpointerdown={onRowPointerDown}
+          onpointerup={(e) => onRowPointerUp(e, i)}
+          onkeydown={(e) => (e.key === 'Enter' || e.key === ' ') && (e.preventDefault(), toggle(i))}
         >
           <span class="name">{project.name}</span>
           {#if project.ongoing}<span class="ongoing">(ongoing)</span>{/if}
@@ -166,6 +229,18 @@
   </div>
 {/if}
 
+<!-- MOBILE: a tap opens this modal (X close, blurred backdrop, #eee card) with
+     the same summary + Live/Code buttons. Desktop uses the hover popup above. -->
+{#if modalProject}
+  <ProjectModal
+    name={modalProject.name}
+    summary={modalProject.summary}
+    liveUrl={modalProject.liveUrl}
+    repoUrl={modalProject.repoUrl}
+    onClose={() => (modalIndex = null)}
+  />
+{/if}
+
 <style lang="scss">
   .list {
     list-style: none;
@@ -193,6 +268,12 @@
     color: var(--color-ink);
     transition: color 0.15s ease;
     outline: none; // focus is signalled by the gold highlight + popup, not a ring
+    // touch polish: no blue tap-flash, no text selection / long-press callout on
+    // a tap (the row is a button, not selectable prose).
+    -webkit-tap-highlight-color: transparent;
+    user-select: none;
+    -webkit-user-select: none;
+    -webkit-touch-callout: none;
   }
 
   // Highlight the hovered/active row gold so it's clear which project's info is
@@ -274,6 +355,50 @@
       display: block;
       width: 100%;
       height: 100%;
+    }
+  }
+
+  // MOBILE (≤768px): now the content is FULL-WIDTH (horizontal split), so each
+  // project is ONE horizontal row — name then its badges on a single line. If a
+  // long badge list overflows, that row scrolls SIDEWAYS (no wrapping into many
+  // rows, which was the visual clutter). Body ~16px.
+  @media (max-width: 768px) {
+    // centre the list as a BLOCK (its widest row defines the block; rows align to
+    // that block's left edge — so the group is centred under the line while each
+    // row's text stays left-aligned).
+    .list {
+      width: fit-content;
+      max-width: 100%;
+      margin-inline: auto;
+      align-items: stretch;
+    }
+    .project {
+      font-size: 1rem; // ~16px body
+    }
+    // each project = ONE horizontal row (name + badges) on a single line; a long
+    // badge list scrolls SIDEWAYS rather than wrapping. padding-block gives the
+    // text descenders (y, g, p) room so overflow-x clipping doesn't cut them.
+    .row {
+      flex-wrap: nowrap;
+      max-width: 100%;
+      padding-block: 0.15rem; // room for descenders inside the x-scroll box
+      overflow-x: auto; // overflowing badges scroll sideways instead of wrapping
+      overflow-y: hidden;
+      scrollbar-width: none; // hide the row's own scrollbar (Firefox)
+      &::-webkit-scrollbar {
+        display: none; // hide it (WebKit)
+      }
+    }
+    .name {
+      white-space: nowrap; // don't let the name wrap mid-row
+      flex: 0 0 auto;
+    }
+    .tech {
+      flex: 0 0 auto; // badges keep their size; the row scrolls if needed
+      flex-wrap: nowrap;
+    }
+    .badge {
+      --badge-size: 1.05em;
     }
   }
 </style>

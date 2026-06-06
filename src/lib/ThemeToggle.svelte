@@ -89,4 +89,14 @@
     background-color: #34302d;
     transform: translateX(calc(var(--track-w) - var(--knob) - var(--pad) * 2));
   }
+
+  // MOBILE (≤768px): shrink the whole switch — the knob + slide math derive from
+  // these three vars, so overriding them scales it down proportionally.
+  @media (max-width: 768px) {
+    .switch {
+      --track-w: 40px;
+      --track-h: 20px;
+      --pad: 3px;
+    }
+  }
 </style>

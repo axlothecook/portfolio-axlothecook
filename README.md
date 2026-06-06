@@ -68,10 +68,13 @@ npm run check    # svelte-check + tsc type checking
 
 - [x] Welcome load animation (GSAP), light/dark theme toggle, placeholder Animated mode.
 - [x] Slides built from typed data (`src/data/{projects,skills,about}.ts`) + monochrome tech-icon components.
-- [ ] Project hover popup with a one-line summary + live/repo links.
-- [ ] Make everything responsive / mobile-friendly.
+- [x] Project info: hover popup with summary + live/repo links (desktop) and a
+      tap-to-open modal (mobile).
+- [x] Responsive / mobile-friendly: horizontal-split layout, swipe slides, mobile
+      load intro, sized/centred text, scroll hints, project modal.
 - [ ] Maximize use of the `axlothecook-sass-library` (beyond plain CSS).
 - [ ] Three.js render for the "Animated" mode.
+- [ ] Restyle the `+` mark (Figma has thicker legs with rounded edges; current is a plain cross).
 - [ ] Trim the library CSS bundle (currently the whole library ships, ~2.5 MB)
       via PurgeCSS or by importing only the partials actually used.
 - [ ] Deploy to `portfolio.axlothecook.com`.

@@ -15,9 +15,10 @@
     title: string
     hero?: boolean // the Welcome slide uses an extra-large title
     scrollable?: boolean // data slides scroll on overflow; Welcome does not
+    compact?: boolean // mobile: cap the scrollable area shorter (e.g. Skills)
     children?: import('svelte').Snippet
   }
-  let { title, hero = false, scrollable = false, children }: Props = $props()
+  let { title, hero = false, scrollable = false, compact = false, children }: Props = $props()
 
   let contentEl: HTMLElement | undefined = $state()
   let overflows = $state(false)
@@ -60,7 +61,7 @@
     </div>
     <div class="spacer"></div>
     <!-- content sits in a left-clipped mask for the same reason -->
-    <div class="content-col">
+    <div class="content-col" class:compact>
       <div
         class="content slide-text"
         class:scrollable
@@ -80,6 +81,7 @@
 <style lang="scss">
   .slide {
     height: 100vh;
+    height: 100dvh; // mobile: track the URL-bar collapse so the slide is 1 screen
     display: flex;
     align-items: center;
   }
@@ -163,11 +165,134 @@
     // symmetric vertical padding so the first and last visible rows sit equally
     // far from the top and bottom of the box
     padding-block: 10px;
-    cursor: pointer; // pointer cursor over the scrollable divs
+    // the scrollable area itself isn't clickable — only project ROWS are (they
+    // set their own pointer cursor). So it uses the default cursor here.
   }
 
   // reserves no space when empty; the hint shows only on overflow
   .hint-slot {
     flex: 0 0 auto;
+  }
+
+  // ---------------------------------------------------------------------------
+  // MOBILE (≤768px): HORIZONTAL split — the separator is a horizontal line across
+  // the slide; the TITLE sits ABOVE it and the CONTENT BELOW it (full width). The
+  // whole title+line+content block is vertically CENTRED in the slide. Slides
+  // change on a left/right swipe (App.svelte); content scrolls up/down inside.
+  // Type scale researched (learnui.design / Pimp My Type / 3 others): hero ~36px,
+  // titles ~30px, body ~16px.
+  // ---------------------------------------------------------------------------
+  @media (max-width: 768px) {
+    .slide {
+      align-items: stretch;
+      padding: 4.5rem 1.5rem 3rem; // clear the top furniture + side gutters
+      box-sizing: border-box;
+    }
+
+    // single column; three rows: [title half][line][content half]. The two 1fr
+    // halves are EQUAL, with the line between them at the vertical centre — so the
+    // title (bottom-aligned in its half) and content (top-aligned in its half)
+    // sit equidistant from the line. Fixes the "text sits low / unbalanced" issue.
+    // The block is LIFTED above centre: the top row is smaller than the bottom
+    // row, so the line sits higher and the content half gets more room (the long
+    // Skills list was clipping over the bottom furniture when centred). Title sits
+    // at the bottom of the (shorter) top row, just above the line.
+    .grid {
+      grid-template-columns: 1fr;
+      grid-template-rows: 0.5fr auto 1fr;
+      align-items: stretch;
+      justify-items: stretch;
+      row-gap: 1rem;
+      height: 100%;
+    }
+
+    // TITLE — bottom of the top half, so it ends just above the line.
+    .title-mask {
+      grid-row: 1;
+      justify-self: stretch;
+      align-self: end;
+      overflow: visible;
+    }
+    // data-slide titles (Projects / Skills & Tools / About me): as large as they
+    // fit on one/two lines without clipping. vw-scaled, capped.
+    .title {
+      text-align: center; // centred above the line on mobile
+      padding-right: 0;
+      font-size: min(9vw, 2.75rem);
+      white-space: normal;
+      line-height: 1.1;
+    }
+    // the Welcome hero title runs bigger — there's room on the front page; push it
+    // toward the desktop scale (still capped so it doesn't wrap on 375px).
+    .title.hero {
+      // "Welcome" sized to the LARGEST that still fits on one row without
+      // clipping. Measured: it fills the content width (~327px at 375vw) at
+      // ~4.7rem, so 18.5vw scales it to that edge on any width while capping at
+      // 5.5rem on wide phones — never clips, never wraps.
+      font-size: min(18.5vw, 5.5rem);
+      font-weight: 500; // heavier, closer to desktop hero presence
+    }
+
+    // SPACER becomes the horizontal separator line itself (the Shell's fixed
+    // vertical divider is hidden on mobile — see Shell.svelte). 4rem inset each
+    // side via the slide padding above + this margin keeps it off the edges.
+    .spacer {
+      grid-row: 2;
+      width: 100%;
+      height: 4px;
+      background-color: var(--color-ink);
+      border-radius: 999px;
+    }
+
+    // CONTENT — below the line, full width, fills the remaining row and scrolls.
+    .content-col {
+      grid-row: 3;
+      width: 100%;
+      max-width: 100%;
+      min-width: 0;
+      height: 100%;
+      min-height: 0;
+      gap: 0;
+    }
+    .content {
+      padding-left: 0;
+      padding-right: 0;
+      font-size: 1rem; // ~16px body
+      min-width: 0;
+      text-align: center; // centre the content text below the line on mobile
+    }
+    .content.scrollable {
+      flex: 1;
+      height: auto;
+      min-height: 0;
+      max-height: 100%;
+      overflow-y: auto;
+    }
+    // `compact` slides (e.g. Skills) cap the scrollable MUCH shorter so the
+    // visible block ends well ABOVE the bottom-right sticks/animations — only a
+    // few rows show, then it scrolls. Still the SINGLE scroller, so the
+    // overflow-driven scroll hint keeps working.
+    .content-col.compact .content.scrollable {
+      flex: 0 1 auto;
+      max-height: 62%; // a few more rows before it scrolls
+    }
+    // wider gap between the (compact) content and the scroll hint below it
+    .content-col.compact .hint-slot {
+      margin-top: 1.25rem;
+    }
+    // the content-col stacks the content over the hint on mobile (vs side-by-side
+    // on desktop) so the scroll hint sits centred BELOW the scrollable content.
+    .content-col {
+      flex-direction: column;
+      align-items: center;
+    }
+    .content {
+      width: 100%;
+    }
+    .hint-slot {
+      // shown only when content overflows (the hint itself self-hides otherwise);
+      // a small centred "Scroll" cue under the list.
+      margin-top: 0.25rem;
+    }
   }
 </style>

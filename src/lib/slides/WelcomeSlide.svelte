@@ -31,15 +31,16 @@
     line-height: 1;
   }
 
-  // Bigger fonts, with weight scaling up with size (bigger = thicker).
+  // Bigger fonts, with weight scaling up with size (bigger = thicker). line-1 and
+  // line-2 are bumped heavier so the three rows read as a clearer hierarchy.
   .line-1 {
     font-size: 4rem;
-    font-weight: 500;
+    font-weight: 600;
   }
 
   .line-2 {
     font-size: 3rem;
-    font-weight: 400;
+    font-weight: 500;
   }
 
   .line-3 {
@@ -48,5 +49,37 @@
     // optical balance: larger rows carry more internal font leading, so the
     // top↔middle gap reads bigger. Nudge the last row down to even it out.
     margin-top: 6px;
+  }
+
+  // MOBILE (≤768px): the tagline rows are too wide for a phone at desktop sizes.
+  // Shrink to the researched mobile type scale (H2 ~24px, H3 ~20px, H4 ~17px) and
+  // allow wrapping if a line still doesn't fit beside the divider.
+  // MOBILE (≤768px): the tagline can run bigger than the earlier conservative
+  // sizes — there's vertical room on the Welcome slide. Push toward the desktop
+  // scale (kept a step smaller so the rows don't wrap on a 375px screen). Weights
+  // inherit the bumped 600/500/300 from the base rules.
+  @media (max-width: 768px) {
+    .tagline {
+      align-items: center; // centre the tagline rows on mobile
+      text-align: center;
+      gap: 0.5rem;
+    }
+    .line {
+      white-space: normal;
+    }
+    // line-1 ("To a place where") fills ONE row at the largest size it can. It's a
+    // long phrase (~2.4x wider than "Welcome"), so its one-row max is much
+    // smaller than the hero. Measured: it fills the content width at ~10.5vw, so
+    // that vw (capped) keeps it on a single line, edge-to-edge, never clipping.
+    .line-1 {
+      white-space: nowrap;
+      font-size: min(10.5vw, 2.5rem);
+    }
+    .line-2 {
+      font-size: 2.1rem;
+    }
+    .line-3 {
+      font-size: 1.6rem;
+    }
   }
 </style>

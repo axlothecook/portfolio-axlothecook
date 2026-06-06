@@ -235,4 +235,17 @@
       filter: blur(1px) hue-rotate(360deg);
     }
   }
+
+  // MOBILE (≤768px): the pill is too wide for a phone (it collides with the
+  // top-left "+" and the top-right theme toggle). Make it compact.
+  @media (max-width: 768px) {
+    .toggle {
+      gap: 0.1rem;
+      padding: 0.25rem 0.35rem;
+    }
+    .option {
+      font-size: 0.8rem;
+      padding: 0.25rem 0.55rem;
+    }
+  }
 </style>

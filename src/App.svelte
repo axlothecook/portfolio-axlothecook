@@ -21,9 +21,9 @@
 
   // --- transition tuning ---
   // The text fades OUT first, THEN the next fades IN (sequenced, no overlap).
-  // Fade-in is slower than fade-out.
-  const FADE_OUT = 0.6
-  const FADE_IN = 1.1
+  // Fade-in is slower than fade-out. (Sped up slightly for snappier slide changes.)
+  const FADE_OUT = 0.45
+  const FADE_IN = 0.8
 
   let currentIndex = $state(0)
 
@@ -54,6 +54,7 @@
   let bottomDotsEl: HTMLElement | undefined = $state() // bottom-left 3 dots (Newton's cradle)
   let projectileEl: HTMLElement | undefined = $state() // first ball (knocks sticks down)
   let splitBalls: HTMLElement[] = $state([]) // 3 balls the wizard shoots at the sticks
+  let mobileDotEl: HTMLElement | undefined = $state() // mobile intro dot (forms the line)
 
   // Welcome-leads (true) plays "Welcome" then the tagline; false = all at once.
   // We try both to compare.
@@ -80,9 +81,23 @@
     const fromText = from.querySelectorAll('.slide-text')
     const toText = to.querySelectorAll('.slide-text')
 
+    // On MOBILE slides change horizontally (text moves on X); on desktop it's the
+    // vertical Y motion. The motion DIRECTION follows the navigation direction so
+    // the user can tell which way they're going: going FORWARD (next, dir=1) the
+    // outgoing exits in the negative direction and the incoming enters from the
+    // positive side; going BACKWARD (prev, dir=-1) both flip. (Forward = exits
+    // left / enters from right; backward = exits right / enters from left.)
+    const axis: 'x' | 'y' = isMobile() ? 'x' : 'y'
+    const outVars: gsap.TweenVars = { autoAlpha: 0, duration: FADE_OUT, ease: 'power2.in' }
+    const inFrom: gsap.TweenVars = { autoAlpha: 0 }
+    const inTo: gsap.TweenVars = { autoAlpha: 1, duration: FADE_IN, ease: 'power2.out' }
+    outVars[axis] = -SHIFT * direction
+    inFrom[axis] = SHIFT * direction
+    inTo[axis] = 0
+
     // keep the incoming panel hidden until the out-fade has finished
     gsap.set(to, { autoAlpha: 0, zIndex: 0 })
-    gsap.set(toText, { y: SHIFT, autoAlpha: 0 })
+    gsap.set(toText, inFrom)
 
     const tl = gsap.timeline({
       onComplete() {
@@ -91,12 +106,7 @@
     })
 
     // 1) outgoing: slide text + indicator fade out together (same phase)
-    tl.to(fromText, {
-      y: -SHIFT,
-      autoAlpha: 0,
-      duration: FADE_OUT,
-      ease: 'power2.in',
-    })
+    tl.to(fromText, outVars)
     if (indicatorEl) {
       tl.to(indicatorEl, { autoAlpha: 0, duration: FADE_OUT, ease: 'power2.in' }, '<')
     }
@@ -109,12 +119,7 @@
 
     // 2) incoming: slide text + indicator fade in together (same phase)
     tl.set(to, { autoAlpha: 1, zIndex: 1 })
-    tl.to(toText, {
-      y: 0,
-      autoAlpha: 1,
-      duration: FADE_IN,
-      ease: 'power2.out',
-    })
+    tl.to(toText, inTo)
     if (indicatorEl) {
       tl.to(indicatorEl, { autoAlpha: 1, duration: FADE_IN, ease: 'power2.out' }, '<')
     }
@@ -153,22 +158,40 @@
     if (e.key === 'ArrowUp' || e.key === 'PageUp') go(-1)
   }
 
-  // Touch (phone): swipe up = next, swipe down = previous.
+  // Touch (phone): slides change on a HORIZONTAL swipe — swipe LEFT = next,
+  // swipe RIGHT = previous. We act ONLY on a dominantly-horizontal gesture, so
+  // VERTICAL scrolling is left entirely to the browser (the content divs scroll
+  // up/down natively). This is what avoids hijacking the page scroll — fixing the
+  // scroll-up-reloads / page-extends bugs that the up/down handler caused.
+  let touchStartX = 0
   let touchStartY = 0
   function onTouchStart(e: TouchEvent) {
+    touchStartX = e.touches[0].clientX
     touchStartY = e.touches[0].clientY
   }
   function onTouchEnd(e: TouchEvent) {
+    if (loadLocked) return
+    const dx = touchStartX - e.changedTouches[0].clientX
     const dy = touchStartY - e.changedTouches[0].clientY
-    if (Math.abs(dy) > 40) go(dy > 0 ? 1 : -1)
+    // only a dominantly-horizontal swipe past the threshold changes a slide
+    if (Math.abs(dx) > 45 && Math.abs(dx) > Math.abs(dy) * 1.3) {
+      go(dx > 0 ? 1 : -1) // content moves left → next slide
+    }
   }
+
+  // mobile = the same ≤768px breakpoint the CSS uses. On mobile the layout is
+  // stacked around a HORIZONTAL divider and the wizard intro is replaced by a
+  // simple dot-splash + line-grow + fade-in (see playMobileLoad).
+  const isMobile = () =>
+    typeof window !== 'undefined' && window.matchMedia('(max-width: 768px)').matches
 
   onMount(() => {
     // Only the first (Welcome) slide is visible.
     panels.forEach((p, i) => {
       gsap.set(p, { autoAlpha: i === 0 ? 1 : 0, zIndex: i === 0 ? 1 : 0 })
     })
-    playLoadAnimation()
+    if (isMobile()) playMobileLoad()
+    else playLoadAnimation()
   })
 
   // Perpetual gravity-bounce on a stick's dot (the earlier design): launch up,
@@ -261,6 +284,113 @@
       repeat: -1,
       ease: 'none',
     })
+  }
+
+  // MOBILE load intro (≤768px): NO wizard, and the divider is HIDDEN (each slide
+  // draws its own horizontal separator). Mirrors the DESKTOP dot-into-line beat,
+  // but the line forms HORIZONTALLY:
+  //   1. the separator starts as a round DOT above its slot; it drops in + bounces
+  //   2. a splash squash, then it stretches SIDEWAYS into the full-width line
+  //   3. the shell furniture + bottom-right sticks fade into place
+  //   4. "Welcome" drops in from above the line; the tagline rises from below
+  //   5. the perpetual furniture motions start (spin / bounce / bob)
+  function playMobileLoad() {
+    const welcome = panels[0]
+    const title = welcome?.querySelector('.title') as HTMLElement | null
+    const tagline = welcome?.querySelector('.tagline') as HTMLElement | null
+    const line = welcome?.querySelector('.spacer') as HTMLElement | null
+    const dot = mobileDotEl
+
+    const DOT = 12 // dot diameter (px)
+
+    // the FINAL line geometry + POSITION (so the dot grows to exactly match — and
+    // lands exactly ON — the real .spacer in the Welcome grid). The dot is anchored
+    // at top:50% (viewport centre); restY shifts it onto the line's real centre so
+    // the hand-off doesn't jump (the grid line isn't exactly at viewport centre).
+    const lineRect = line?.getBoundingClientRect()
+    const lineW = line?.offsetWidth || window.innerWidth - 48
+    const restY = lineRect ? lineRect.top + lineRect.height / 2 - window.innerHeight / 2 : 0
+    const dropFrom = restY - (window.innerHeight / 2 + 60) // off-screen above the rest spot
+
+    // initial states: furniture/sticks/text hidden. The real per-slide line stays
+    // hidden until the dot finishes forming, then we reveal it + remove the dot —
+    // so every slide's line ends up identical (plain CSS), no residual styles.
+    if (furnitureEl) gsap.set(furnitureEl, { autoAlpha: 0 })
+    if (sticksEl) gsap.set(sticksEl, { autoAlpha: 0 }) // bottom-right fades in too
+    if (line) gsap.set(line, { autoAlpha: 0 })
+    if (title) gsap.set(title, { y: -24, autoAlpha: 0 })
+    if (tagline) gsap.set(tagline, { y: 24, autoAlpha: 0 })
+    // the intro dot starts as a small circle, off-screen above SCREEN CENTRE.
+    // xPercent/yPercent:-50 keep it centred on its top/left:50% anchor as it
+    // resizes (so growth is symmetric about the centre, not left-anchored).
+    if (dot) gsap.set(dot, { xPercent: -50, yPercent: -50, width: DOT, height: DOT, x: 0, y: dropFrom, autoAlpha: 1 })
+
+    const tl = gsap.timeline({
+      onComplete() {
+        loadLocked = false // front page fully shown — allow swiping
+        startMobileFurnitureMotion() // perpetual: spin, bounce, bob
+      },
+    })
+
+    if (dot) {
+      // 1) the dot drops from off-screen onto the LINE'S rest spot (= where the
+      //    real .spacer sits, so the later hand-off doesn't jump)
+      tl.to(dot, { y: restY, duration: 0.6, ease: 'power2.in' })
+      // 2) one small bounce
+      tl.to(dot, { y: restY - 44, duration: 0.32, ease: 'power2.out' })
+      tl.to(dot, { y: restY, duration: 0.28, ease: 'power2.in' })
+      // 3) splash squash, then stretch SIDEWAYS (centred) into the full line width
+      tl.to(dot, { width: DOT + 6, height: DOT - 5, duration: 0.1, ease: 'power2.out' })
+      tl.to(dot, { width: lineW, height: 4, duration: 0.55, ease: 'power3.inOut' })
+      // 4) hand off: reveal the real per-slide line, hide the intro dot. They're at
+      //    the SAME position now, so there's no visible jump.
+      tl.add(() => {
+        if (line) gsap.set(line, { autoAlpha: 1 })
+        gsap.set(dot, { autoAlpha: 0 })
+      })
+    } else if (line) {
+      tl.to(line, { autoAlpha: 1, duration: 0.4 })
+    }
+
+    // 5) furniture + bottom-right sticks fade in as the line completes
+    if (furnitureEl) tl.to(furnitureEl, { autoAlpha: 1, duration: 0.6 }, '>-0.15')
+    if (sticksEl) tl.to(sticksEl, { autoAlpha: 1, duration: 0.6 }, '<')
+    // 6) title drops in from above the line; tagline rises from below
+    tl.addLabel('textIn', '>-0.1')
+    if (title) tl.to(title, { y: 0, autoAlpha: 1, duration: 0.6, ease: 'power3.out' }, 'textIn')
+    if (tagline) tl.to(tagline, { y: 0, autoAlpha: 1, duration: 0.6, ease: 'power3.out' }, 'textIn+=0.15')
+  }
+
+  // Perpetual decorative motion on MOBILE (no wizard to wire it up). Spins the
+  // "+", bounces each bottom-right stick dot, and runs a simple bob on the
+  // bottom-left dot stack — so the corners aren't static.
+  function startMobileFurnitureMotion() {
+    // the "+" spins forever (snappy pulse like desktop)
+    if (plusEl) {
+      gsap.set(plusEl, { transformOrigin: '50% 50%' })
+      gsap.to(plusEl, { rotation: '+=360', duration: 0.8, ease: 'power3.inOut', repeat: -1, repeatDelay: 0.5 })
+    }
+    // each bottom-right stick dot does the gravity bounce (staggered)
+    if (sticksEl) {
+      const dots = Array.from(sticksEl.querySelectorAll('.dot')) as HTMLElement[]
+      dots.forEach((dot, i) => {
+        gsap.delayedCall(i * 0.35, () => startDotBounce(dot))
+      })
+    }
+    // the bottom-left dot stack runs the REAL perpetual Newton's-cradle loop (the
+    // same one the desktop wizard sets up): top ball drops, the impulse passes
+    // down through the chain, the bottom ball dips + returns, the impulse passes
+    // back up, the top ball rises to its peak — forever. Rests are 0 (at-rest).
+    if (bottomDotsEl) {
+      const dots = Array.from(bottomDotsEl.querySelectorAll('.dot')) as HTMLElement[]
+      if (dots.length === 4) {
+        const rests = dots.map(() => 0)
+        // pre-lift the top ball to its peak so the first drop starts from there
+        // (matches startNewtonsCradle's expectation), then start the loop.
+        gsap.set(dots[0], { y: -NEWTON_TOP_LIFT })
+        startNewtonsCradle(dots, rests)
+      }
+    }
   }
 
   // The page-load sequence:
@@ -898,6 +1028,12 @@
   <div class="character-anchor" bind:this={characterEl}><Character /></div>
 </div>
 
+<!-- MOBILE-only intro dot: a fixed dot centred on screen that drops in from off
+     the top, splashes, then stretches into the Welcome slide's horizontal line.
+     The real per-slide separator stays plain CSS (identical on every slide); this
+     overlay just performs the form-in, then hands off + removes itself. -->
+<div class="mobile-intro-dot" bind:this={mobileDotEl}></div>
+
 <!-- the first small ball the wizard shoots (knocks the sticks down) -->
 <div class="projectile" bind:this={projectileEl}></div>
 
@@ -991,6 +1127,25 @@
     z-index: 3;
   }
 
+  // MOBILE intro dot: fixed, centred on screen, ink-coloured. JS drops it in and
+  // grows it into the Welcome line, then hides it. A pill radius gives it a round
+  // shape as a dot and rounded caps once it's a line. Hidden by default (desktop
+  // never shows it; on mobile JS sets autoAlpha).
+  .mobile-intro-dot {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    width: 12px;
+    height: 12px;
+    // centring is handled by GSAP (xPercent/yPercent:-50) so its resize stays
+    // symmetric about the centre; no CSS transform here to avoid conflicting.
+    background-color: var(--color-ink);
+    border-radius: 999px;
+    opacity: 0;
+    z-index: 4;
+    pointer-events: none;
+  }
+
   // Layer holding the little rock chips that break off the wall as it's dragged.
   // Chips are spawned into it from JS and positioned absolutely.
   .rocks {
@@ -1016,11 +1171,23 @@
   .deck {
     position: relative;
     height: 100vh;
+    height: 100dvh; // track the mobile URL-bar collapse (no extended area)
     overflow: hidden;
   }
 
   .panel {
     position: absolute;
     inset: 0;
+  }
+
+  // MOBILE (≤768px): the wizard intro doesn't run (playMobileLoad replaces it),
+  // so hide the wizard + all his loose load-animation props entirely.
+  @media (max-width: 768px) {
+    .character-clip,
+    .projectile,
+    .rocks,
+    .split-ball {
+      display: none;
+    }
   }
 </style>
