@@ -143,8 +143,9 @@
   }
 
   .content {
-    // gap from the divider so text never touches/crosses the line
-    padding-left: 1.5rem;
+    // gap from the divider — SAME as the title's gap on the left (3rem) so the
+    // right-side text sits an equal distance from the separator line.
+    padding-left: 3rem;
     padding-right: 1rem;
     flex: 1;
     min-width: 0; // allow the content to shrink so the hint always fits
