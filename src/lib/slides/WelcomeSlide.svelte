@@ -16,6 +16,8 @@
 </Slide>
 
 <style lang="scss">
+  @use '../../styles/responsive' as r; // lib-backed breakpoint mixins
+
   .tagline {
     margin: 0;
     // fixed, equal gap between rows (line-height would make the gap scale with
@@ -58,7 +60,7 @@
   // sizes — there's vertical room on the Welcome slide. Push toward the desktop
   // scale (kept a step smaller so the rows don't wrap on a 375px screen). Weights
   // inherit the bumped 600/500/300 from the base rules.
-  @media (max-width: 768px) {
+  @include r.mobile {
     .tagline {
       align-items: center; // centre the tagline rows on mobile
       text-align: center;

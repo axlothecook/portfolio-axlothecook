@@ -23,6 +23,8 @@
 </div>
 
 <style lang="scss">
+  @use '../styles/responsive' as r; // lib-backed breakpoint mixins
+
   // Standing on the floor: dots on top, lines below, aligned to the bottom edge.
   .sticks {
     display: flex;
@@ -58,7 +60,7 @@
   // MOBILE (≤768px): the wizard intro doesn't run, so (a) the dots are never
   // "placed" by the wizard → reveal them here, and (b) the cluster is tall for a
   // phone → scale it down from its bottom-right corner so it stays a small motif.
-  @media (max-width: 768px) {
+  @include r.mobile {
     .sticks {
       gap: 0.6rem;
       transform: scale(0.4);

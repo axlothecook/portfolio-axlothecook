@@ -79,6 +79,8 @@
 </section>
 
 <style lang="scss">
+  @use '../styles/responsive' as r; // lib-backed breakpoint mixins
+
   .slide {
     height: 100vh;
     height: 100dvh; // mobile: track the URL-bar collapse so the slide is 1 screen
@@ -182,7 +184,7 @@
   // Type scale researched (learnui.design / Pimp My Type / 3 others): hero ~36px,
   // titles ~30px, body ~16px.
   // ---------------------------------------------------------------------------
-  @media (max-width: 768px) {
+  @include r.mobile {
     .slide {
       align-items: stretch;
       padding: 4.5rem 1.5rem 3rem; // clear the top furniture + side gutters

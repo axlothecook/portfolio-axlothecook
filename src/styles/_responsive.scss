@@ -1,0 +1,21 @@
+// Shared responsive helpers, built ON TOP of the axlothecook-sass-library
+// breakpoint system (its `$breakpoints` map + `*-down` desktop-first mixins).
+// Components `@use` this so every media query in the app flows through the
+// library's breakpoints instead of hand-written `@media` rules.
+//
+// The portfolio's "mobile" cutoff = the library's `sm` breakpoint (720px), via
+// its `sm-down` (max-width) mixin. Usage in a component:
+//
+//   @use '../styles/responsive' as r;   // adjust the path per file depth
+//   .thing { ... }
+//   @include r.mobile { .thing { ... } }
+
+@forward 'axlothecook-sass-library/sass-library/breakpoints';
+@use 'axlothecook-sass-library/sass-library/breakpoints' as bp;
+
+// the app's single "mobile / small screen" query — the library's sm-down.
+@mixin mobile {
+  @include bp.sm-down {
+    @content;
+  }
+}

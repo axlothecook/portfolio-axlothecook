@@ -50,6 +50,8 @@
 </div>
 
 <style lang="scss">
+  @use '../styles/responsive' as r; // lib-backed breakpoint mixins
+
   .toggle {
     display: inline-flex;
     align-items: center;
@@ -238,7 +240,7 @@
 
   // MOBILE (≤768px): the pill is too wide for a phone (it collides with the
   // top-left "+" and the top-right theme toggle). Make it compact.
-  @media (max-width: 768px) {
+  @include r.mobile {
     .toggle {
       gap: 0.1rem;
       padding: 0.25rem 0.35rem;

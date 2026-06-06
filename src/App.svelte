@@ -1072,6 +1072,8 @@
 </Shell>
 
 <style lang="scss">
+  @use './styles/responsive' as r; // lib-backed breakpoint mixins
+
   // Clip box pinned with its LEFT edge at the screen centre (the divider line).
   // While `.clipping` is set it hides anything to the LEFT of the line, so the
   // character emerges from behind the line as he walks right. It's TALL and tall-
@@ -1182,7 +1184,7 @@
 
   // MOBILE (≤768px): the wizard intro doesn't run (playMobileLoad replaces it),
   // so hide the wizard + all his loose load-animation props entirely.
-  @media (max-width: 768px) {
+  @include r.mobile {
     .character-clip,
     .projectile,
     .rocks,
