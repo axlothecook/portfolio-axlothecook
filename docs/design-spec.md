@@ -78,25 +78,38 @@ page does not move.
 
 ## Slides (center panel content)
 
+The early sketch below has been SUPERSEDED — the real, shipped content now lives
+in the typed data files (`src/data/{projects,skills,about}.ts`) and is the source
+of truth. Every badge/skill was verified present in at least one repo (see the
+skills audit at `C:\Users\Gebruiker\Desktop\docs\skills-audit.md`, not in-repo).
+The slides below reflect that real data as of 2026-06-06.
+
 1. **Welcome** (hero): big "Welcome" + divider + "To a place where projects of
    passion reside".
-2. **Projects:** (left big title "Projects", list on the right of the divider)
-   - Archery Club — TS, Svelte, MySQL, Three.js
-   - SweetSpot — TS, Svelte, MySQL
-   - CityWeather — JS, React, API
-   - CV Maker — JS, React
-   - Texting App — TS
-   - Arch Linux Ricing — (ongoing)
-3. **Skills & Tools:**
-   - JS (ES5 / ES6): Node.js, Express.js, Typescript
-   - Regex
-   - WebGL: Three.js
-   - Animation: GSAP
-4. **About me:**
+2. **Projects** (left big title "Projects", list on the right of the divider).
+   Priority-ordered; each has tech badges (monochrome icon components) + a
+   one-sentence hover summary. From `src/data/projects.ts`:
+   - Archery Club — TS, Svelte, Sass, Express, Prisma, PostgreSQL, Cloudflare,
+     GoogleTranslate, Brevo, Turnstile
+   - Gaming Shop — TS, Svelte, Sass, Express, MongoDB, Docker, GitHubActions,
+     Cloudflare, RaspberryPi
+   - Google Drive Clone — JS, Express, Prisma, PostgreSQL, Supabase
+   - CV Maker — JS, React, MUI, Express, MongoDB, Docker, RaspberryPi
+   - Sass Library — Sass, Gulp, CSS3
+   - CityWeather — JS, React, GoogleMaps, YouTube, API
+   - Memory Game — JS, React, Tailwind, API
+   - Linux Ricing — PopOS, Arch (ongoing)
+3. **Skills & Tools** (the FULL competency list, broader than the project badges
+   — every CV-worthy tool, grouped by category). From `src/data/skills.ts`:
+   Languages · Frameworks · Libraries · Styling · Animation · Databases ·
+   ORM/data · Auth & security · Deployment · Cloud & storage · Architecture ·
+   Testing · APIs/services · Build tools · Tooling · Design.
+4. **About me** (from `src/data/about.ts`):
    - 📍 Netherlands
    - Contact: lana.segovic@gmail.com
    - Occupation: Full stack developer
-   - Education: self-taught
+   - Education: The Odin Project
+   - Socials: GitHub + LinkedIn (linked icons)
 
 ## Ordering (user note #8)
 
@@ -125,8 +138,10 @@ slides so content is **easy to add / remove / edit**:
   `src/data/skills.ts`, `src/data/about.ts`) as arrays/objects.
 - Slide components render purely from that data — adding or removing a
   project/skill/about-field is a one-line data edit, no markup changes.
-- Tech badges per project (TS, Svelte, MySQL, React, API, Three.js, ...) are
-  also data, mapped to icons.
+- Tech badges per project (TS, Svelte, Sass, React, Express, Docker, ...) are
+  also data: each `Tech` value maps to a monochrome icon COMPONENT via the
+  registry in `src/lib/icons/index.ts` (TypeScript enforces every `Tech` has an
+  icon — a missing one is a build error).
 
 ## Project hover popup (feature)
 

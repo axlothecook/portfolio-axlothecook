@@ -1,20 +1,33 @@
-// Projects shown on the Projects slide.
-//
-// NOT FINALIZED — edit/add/remove entries freely; the slide renders from this
-// array. `tech` lists the tech badges. `summary` is the short text shown in the
-// hover popup (keep it to a couple of words / one sentence max).
-//
-// ⚠️ The `summary` values below are Lorem ipsum PLACEHOLDERS — replace each
-// with real one-sentence copy before launch.
+// Projects shown on the Projects slide. The slide renders from this array.
+// `tech` lists the tech badges (each maps to an icon in src/lib/icons). `summary`
+// is the one-sentence text shown in the hover popup.
 
 export type Tech =
   | 'TS'
   | 'JS'
+  | 'CSS3'
+  | 'Sass'
+  | 'Gulp'
   | 'Svelte'
   | 'React'
-  | 'MySQL'
+  | 'Tailwind'
+  | 'MUI'
+  | 'Express'
+  | 'PostgreSQL'
+  | 'Prisma'
+  | 'MongoDB'
+  | 'Supabase'
+  | 'GoogleTranslate'
+  | 'GoogleMaps'
+  | 'YouTube'
+  | 'Brevo'
+  | 'Turnstile'
   | 'API'
-  | 'ThreeJS'
+  | 'Docker'
+  | 'GitHubActions'
+  | 'Cloudflare'
+  | 'RaspberryPi'
+  | 'PopOS'
   | 'Arch'
 
 export interface Project {
@@ -27,44 +40,61 @@ export interface Project {
 export const projects: Project[] = [
   {
     name: 'Archery Club',
-    tech: ['TS', 'Svelte', 'MySQL', 'ThreeJS'],
+    // flagship full-stack: SvelteKit FE + TS/Express/Prisma/Postgres BE + Cloudflare R2,
+    // self-hosted on a Raspberry Pi via a custom CI/CD pipeline.
+    tech: ['TS', 'Svelte', 'Sass', 'Express', 'Prisma', 'PostgreSQL', 'Cloudflare', 'GoogleTranslate', 'Brevo', 'Turnstile'],
     summary:
-      'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.',
+      'Full-stack club website (SvelteKit + TypeScript/Express/Prisma/Postgres), self-hosted on my own Raspberry Pi through a custom CI/CD pipeline.',
   },
   {
-    name: 'SweetSpot',
-    tech: ['TS', 'Svelte', 'MySQL'],
+    name: 'Gaming Shop',
+    // Docker Compose + GitHub Actions CI/CD + GHCR + Cloudflare Tunnel, self-hosted on a Pi.
+    tech: ['TS', 'Svelte', 'Sass', 'Express', 'MongoDB', 'Docker', 'GitHubActions', 'Cloudflare', 'RaspberryPi'],
     summary:
-      'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.',
+      'An e-commerce shop deployed to my own Raspberry Pi via Docker, a GitHub Actions CI/CD pipeline and a Cloudflare Tunnel.',
   },
   {
-    name: 'CityWeather',
-    tech: ['JS', 'React', 'API'],
+    name: 'Google Drive Clone',
+    // Small-Google-Drive: Express + Prisma + Postgres + Supabase storage + Passport auth.
+    tech: ['JS', 'Express', 'Prisma', 'PostgreSQL', 'Supabase'],
     summary:
-      'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.',
+      'A Google-Drive-style file manager with authentication and cloud storage, built on Express, Prisma/PostgreSQL and Supabase.',
   },
   {
     name: 'CV Maker',
-    tech: ['JS', 'React'],
+    // Create_Resume: React + MUI FE, Express + Mongo BE, auth, PDF export; Pi + CI/CD.
+    tech: ['JS', 'React', 'MUI', 'Express', 'MongoDB', 'Docker', 'RaspberryPi'],
     summary:
-      'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.',
+      'A drag-and-drop résumé builder with live PDF export (React + MUI, Express + MongoDB), self-hosted on a Raspberry Pi.',
   },
   {
-    name: 'Texting App',
-    tech: ['TS'],
+    name: 'Sass Library',
+    // axlothecook-sass-library: published SCSS component library (Gulp build),
+    // consumed by Archery FE, Gaming Shop FE, and this portfolio.
+    tech: ['Sass', 'Gulp', 'CSS3'],
     summary:
-      'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.',
+      'A reusable SCSS component library (my own Tailwind/Bootstrap alternative), published on GitHub and used across my projects.',
   },
   {
-    name: 'Arch Linux Ricing',
-    tech: ['Arch'],
+    name: 'CityWeather',
+    // React + Visual Crossing + Google Places/Maps + YouTube + Chart.js + Motion.
+    // GoogleMaps + YouTube have logos; the generic API badge covers Visual Crossing.
+    tech: ['JS', 'React', 'GoogleMaps', 'YouTube', 'API'],
     summary:
-      'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.',
+      'A weather dashboard orchestrating multiple third-party APIs (Visual Crossing, Google Places/Maps, YouTube) with charts and motion.',
+  },
+  {
+    name: 'Memory Game',
+    // ArknightsMemoryCardGame: React 19 + Tailwind + Vite + parallax tilt + remote image fetch.
+    tech: ['JS', 'React', 'Tailwind', 'API'],
+    summary:
+      'An animated memory card game (React + Tailwind) that fetches character art remotely, with parallax-tilt card effects.',
+  },
+  {
+    name: 'Linux Ricing',
+    // creative/personal — Pop!_OS + Arch desktop customization.
+    tech: ['PopOS', 'Arch'],
+    summary: 'Custom Linux desktop setups (Pop!_OS and Arch) — an ongoing creative/configuration hobby.',
     ongoing: true,
   },
 ]
-
-// TEMPORARY: duplicate the list so it overflows and the scroll behaviour is
-// testable before real data exists. REMOVE this block once there are enough
-// real projects.
-projects.push(...projects.map((p) => ({ ...p })))
