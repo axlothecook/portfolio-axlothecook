@@ -303,11 +303,13 @@
     }
   }
 
-  // MOBILE (≤768px): a project's name + badges can be wider than the narrow
-  // content column. Let the row WRAP (badges flow under the name) and let the
-  // badge cluster ITSELF wrap, so a long badge list flows onto multiple lines
-  // and never overflows the column / screen.
+  // MOBILE (≤768px): shrink the project rows to the ~16px body scale, and let a
+  // row + its badge cluster WRAP so a long badge list (e.g. Archery's 9) flows
+  // onto multiple lines within the narrow content column instead of overflowing.
   @media (max-width: 768px) {
+    .project {
+      font-size: 1rem; // ~16px body
+    }
     .row {
       flex-wrap: wrap;
       width: 100%;
@@ -315,7 +317,11 @@
     }
     .tech {
       flex-wrap: wrap;
-      row-gap: 0.4rem;
+      row-gap: 0.35rem;
+    }
+    // smaller badge boxes so more fit per line
+    .badge {
+      --badge-size: 1.05em;
     }
   }
 </style>

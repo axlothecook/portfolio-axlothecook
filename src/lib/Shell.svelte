@@ -261,51 +261,38 @@
   }
 
   // ---------------------------------------------------------------------------
-  // MOBILE (≤768px): the slides stack (title over content, see Slide.svelte), so
-  // the CENTRED VERTICAL divider no longer separates two columns — hide it (a
-  // light horizontal rule under each title replaces it). Trim/reposition the
-  // decorative furniture so it doesn't crowd a phone, but keep both toggles.
+  // MOBILE (≤768px): SAME layout as desktop — vertical divider, title left /
+  // content right — just SHRUNK. The divider gets shorter + thinner, and every
+  // decorative element (left wall, left/bottom-left dots, sticks + their dots,
+  // the "+", the inner scroll indicator) is scaled down so the side-by-side
+  // layout fits a phone without crowding.
   // ---------------------------------------------------------------------------
   @media (max-width: 768px) {
-    // The centre divider turns HORIZONTAL: a line across the middle of the
-    // screen, inset 4rem from each side. The slides stack title-above /
-    // content-below this line (see Slide.svelte). The line is one element shared
-    // with the load animation, so its final size is set here (width = span,
-    // height = thickness); App's MOBILE load branch grows it along this axis.
+    // shorter divider on phones: --divider-height drives BOTH the line length and
+    // the scrollable content height (Slide.svelte), so shrinking it here keeps
+    // the line a sensible fraction of a short screen and shrinks the content box.
+    .shell {
+      --divider-height: 12rem; // ~192px (was 18rem) — fits a phone
+    }
+    // thinner vertical divider
     .center-divider {
-      width: calc(100vw - 8rem); // 4rem inset each side
-      height: 6px; // thickness (was the line width on desktop)
+      width: 4px;
+      height: var(--divider-height);
     }
 
-    // the inner scroll-indicator runs along the horizontal line now: 1/3 of the
-    // span, sliding left/middle/right for the active slide.
+    // thinner inner scroll-indicator (still vertical: top/middle/bottom).
     .inner-line {
-      --span: calc(100vw - 8rem);
-      --inner-w: calc(var(--span) / 3);
-      --half-h: calc(var(--span) / 2 - var(--inner-w) / 2 - 5px);
-
-      width: var(--inner-w);
-      height: 3px;
-    }
-    // slide the inner indicator horizontally (top→left, bottom→right) on mobile
-    .inner-line[data-pos='top'] {
-      transform: translate(-50%, -50%) translateX(calc(var(--half-h) * -1));
-    }
-    .inner-line[data-pos='middle'] {
-      transform: translate(-50%, -50%);
-    }
-    .inner-line[data-pos='bottom'] {
-      transform: translate(-50%, -50%) translateX(var(--half-h));
+      width: 2px;
     }
 
-    // a slimmer left edge bar
+    // slimmer left edge wall
     .left-bar {
-      width: 8px;
+      width: 10px;
     }
 
-    // top-left: smaller "+" and tighter to the corner, clear of the left bar
+    // top-left "+" + dots: smaller and tighter to the corner, clear of the wall.
     .top-left {
-      top: 1rem;
+      top: 1.25rem;
       left: 1.5rem;
       gap: 0.4rem;
     }
@@ -313,12 +300,15 @@
       width: 30px;
       height: 30px;
     }
-    // the small stacked dots under the "+" add clutter on a phone — hide them
+    .top-left .dot {
+      width: 6px;
+      height: 6px;
+    }
     .top-left .dots {
-      display: none;
+      gap: 4px;
     }
 
-    // toggles stay but pull in toward the edges
+    // toggles pull in toward the edges (the pill itself is shrunk in Toggle.svelte)
     .top-center {
       top: 0.9rem;
     }
@@ -327,19 +317,27 @@
       right: 1rem;
     }
 
-    // bottom-left dots + bottom-centre indicator: keep the indicator (it shows
-    // which slide you're on), drop the decorative bottom-left dot cradle.
+    // bottom-left decorative dots: shrink (kept, not hidden).
     .bottom-left {
-      display: none;
+      bottom: 2.5rem;
+      left: 1.5rem;
     }
+    .bottom-left .dot {
+      width: 6px;
+      height: 6px;
+    }
+    .bottom-left .dots {
+      gap: 4px;
+    }
+
     .bottom-center {
       bottom: 1.5rem;
     }
 
-    // the bottom-right sticks are a decorative desktop motif tuned in px — hide
-    // on mobile so they don't collide with content or the indicator.
+    // bottom-right sticks: pull closer to the edge so they don't crowd the
+    // content (they're scaled down via Sticks.svelte's own mobile rule).
     .bottom-right {
-      display: none;
+      right: 2rem;
     }
   }
 </style>

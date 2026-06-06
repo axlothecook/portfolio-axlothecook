@@ -153,10 +153,10 @@
     if (e.key === 'ArrowUp' || e.key === 'PageUp') go(-1)
   }
 
-  // Touch (phone): slides change on a HORIZONTAL swipe (swipe LEFT = next,
-  // swipe RIGHT = previous). Vertical movement is left to the browser so the
-  // scrollable content divs scroll up/down normally. We only act when the
-  // gesture is dominantly horizontal, so an up/down scroll never flips a slide.
+  // Touch (phone): swipe UP = next slide, swipe DOWN = previous (same up/down
+  // model as the desktop wheel). Only act when the gesture is dominantly
+  // vertical AND the content under it can't scroll further in that direction, so
+  // scrolling inside a content div never flips a slide.
   let touchStartX = 0
   let touchStartY = 0
   function onTouchStart(e: TouchEvent) {
@@ -167,10 +167,21 @@
     if (loadLocked) return
     const dx = touchStartX - e.changedTouches[0].clientX
     const dy = touchStartY - e.changedTouches[0].clientY
-    // dominantly horizontal + past the threshold → change slide
-    if (Math.abs(dx) > 40 && Math.abs(dx) > Math.abs(dy)) {
-      go(dx > 0 ? 1 : -1) // swipe left (content moves left) → next
+    // ignore dominantly-horizontal gestures and small movements
+    if (Math.abs(dy) < 40 || Math.abs(dy) < Math.abs(dx)) return
+    const dir: 1 | -1 = dy > 0 ? 1 : -1
+
+    // if the content under the touch can still scroll this way, let it scroll
+    const scroller = (e.target as HTMLElement)?.closest?.('.content.scrollable') as
+      | HTMLElement
+      | null
+    if (scroller) {
+      const atTop = scroller.scrollTop <= 0
+      const atBottom = scroller.scrollTop + scroller.clientHeight >= scroller.scrollHeight - 1
+      const canScroll = dir > 0 ? !atBottom : !atTop
+      if (canScroll) return
     }
+    go(dir)
   }
 
   // mobile = the same ≤768px breakpoint the CSS uses. On mobile the layout is
@@ -280,15 +291,14 @@
     })
   }
 
-  // MOBILE load intro (≤768px): NO wizard. The divider is HORIZONTAL here, so:
-  //   1. a dot drops from off-screen top to the screen centre
+  // MOBILE load intro (≤768px): NO wizard, but the layout is the same as desktop
+  // (vertical divider, title LEFT / content RIGHT), just smaller. So:
+  //   1. a dot drops from off-screen top to the centre
   //   2. one small bounce
-  //   3. a splash squash, then it stretches sideways into the horizontal line
+  //   3. a splash squash, then it stretches VERTICALLY into the divider line
   //   4. meanwhile the shell furniture fades into place
-  //   5. then the Welcome title drops in from above the line + the tagline rises
-  //      in from below it
-  // The divider is one shared element whose size CSS can't pin during load (App
-  // sets it inline), so we size it horizontally here, in JS.
+  //   5. then "Welcome" slides in from the right side of the line + the tagline
+  //      slides in from the left (a fade+slide, no masking needed)
   function playMobileLoad() {
     const welcome = panels[0]
     const title = welcome?.querySelector('.title') as HTMLElement | null
@@ -296,22 +306,20 @@
     if (!dividerEl) return
 
     const dropFrom = -(window.innerHeight / 2 + 100) // off-screen above centre
-    const BALL = 14 // ball diameter (px)
-    const LINE_T = 6 // final line thickness (px) — matches mobile .center-divider
-    const rem = parseFloat(getComputedStyle(document.documentElement).fontSize) || 16
-    const spanW = window.innerWidth - 8 * rem // 4rem inset each side
+    const BALL = 12 // ball diameter (px) — a touch smaller for phones
+    const LINE_W = 4 // final line width (px) — matches mobile .center-divider
+    const lineH = dividerEl.offsetHeight || 200 // mobile divider height (CSS)
 
     // initial states: divider = ball off-screen above; furniture + text hidden.
     gsap.set(dividerEl, { width: BALL, height: BALL, y: dropFrom, x: 0 })
     if (furnitureEl) gsap.set(furnitureEl, { autoAlpha: 0 })
-    // the wizard-only props (sticks/wall/plus/dots/character) are display:none on
-    // mobile, so we don't touch them. Text starts offset + transparent.
-    if (title) gsap.set(title, { y: -40, autoAlpha: 0 })
-    if (tagline) gsap.set(tagline, { y: 40, autoAlpha: 0 })
+    // title/tagline tucked toward the divider, transparent (slide in from sides).
+    if (title) gsap.set(title, { x: 30, autoAlpha: 0 })
+    if (tagline) gsap.set(tagline, { x: -30, autoAlpha: 0 })
 
     const tl = gsap.timeline({
       onComplete() {
-        loadLocked = false // front page fully shown — allow swiping
+        loadLocked = false // front page fully shown — allow scrolling
       },
     })
 
@@ -320,15 +328,15 @@
     // 2) one small bounce
     tl.to(dividerEl, { y: -90, duration: 0.4, ease: 'power2.out' })
     tl.to(dividerEl, { y: 0, duration: 0.34, ease: 'power2.in' })
-    // 3) splash squash (flatten), then stretch SIDEWAYS into the horizontal line
+    // 3) splash squash (flatten), then stretch VERTICALLY into the divider line
     tl.to(dividerEl, { width: BALL + 6, height: BALL - 5, duration: 0.12, ease: 'power2.out' })
-    tl.to(dividerEl, { width: spanW, height: LINE_T, duration: 0.7, ease: 'power3.inOut' })
+    tl.to(dividerEl, { width: LINE_W, height: lineH, duration: 0.7, ease: 'power3.inOut' })
     // 4) furniture fades into place once the line has formed
     if (furnitureEl) tl.to(furnitureEl, { autoAlpha: 1, duration: 0.6 }, '>-0.1')
-    // 5) Welcome title drops in from above the line; tagline rises from below.
+    // 5) Welcome slides in from the right of the line; tagline from the left.
     tl.addLabel('textIn', '+=0.1')
-    if (title) tl.to(title, { y: 0, autoAlpha: 1, duration: 0.7, ease: 'power3.out' }, 'textIn')
-    if (tagline) tl.to(tagline, { y: 0, autoAlpha: 1, duration: 0.7, ease: 'power3.out' }, 'textIn+=0.2')
+    if (title) tl.to(title, { x: 0, autoAlpha: 1, duration: 0.7, ease: 'power3.out' }, 'textIn')
+    if (tagline) tl.to(tagline, { x: 0, autoAlpha: 1, duration: 0.7, ease: 'power3.out' }, 'textIn+=0.2')
   }
 
   // The page-load sequence:

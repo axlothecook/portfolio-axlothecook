@@ -54,4 +54,18 @@
     // on the drop. Falls back to full if no JS.
     height: var(--line-height, var(--stick-height));
   }
+
+  // MOBILE (≤768px): the wizard intro doesn't run, so (a) the dots are never
+  // "placed" by the wizard → reveal them here, and (b) the cluster is tall for a
+  // phone → scale it down from its bottom-right corner so it stays a small motif.
+  @media (max-width: 768px) {
+    .sticks {
+      gap: 0.6rem;
+      transform: scale(0.4);
+      transform-origin: bottom right;
+    }
+    .dot {
+      opacity: 1; // no wizard to land balls → show the dots directly
+    }
+  }
 </style>

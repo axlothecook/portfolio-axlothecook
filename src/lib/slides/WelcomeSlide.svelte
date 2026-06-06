@@ -50,20 +50,21 @@
     margin-top: 6px;
   }
 
-  // MOBILE (≤768px): the tagline rows are too wide for a phone at desktop sizes;
-  // scale them down and let them wrap if still needed.
+  // MOBILE (≤768px): the tagline rows are too wide for a phone at desktop sizes.
+  // Shrink to the researched mobile type scale (H2 ~24px, H3 ~20px, H4 ~17px) and
+  // allow wrapping if a line still doesn't fit beside the divider.
   @media (max-width: 768px) {
     .line {
       white-space: normal;
     }
     .line-1 {
-      font-size: 2rem;
+      font-size: 1.5rem; // ~24px (H2)
     }
     .line-2 {
-      font-size: 1.6rem;
+      font-size: 1.25rem; // ~20px (H3)
     }
     .line-3 {
-      font-size: 1.25rem;
+      font-size: 1.0625rem; // ~17px (H4)
     }
   }
 </style>

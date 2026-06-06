@@ -25,4 +25,12 @@
     font-weight: 300;
     line-height: 1.2; // enough for wrapping skill lines without inflating row gap
   }
+
+  // MOBILE (≤768px): shrink to the ~16px body scale + tighter row gap.
+  @media (max-width: 768px) {
+    .list {
+      font-size: 1rem; // ~16px body
+      gap: 0.7rem;
+    }
+  }
 </style>

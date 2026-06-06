@@ -172,84 +172,44 @@
   }
 
   // ---------------------------------------------------------------------------
-  // MOBILE (≤768px): the desktop layout puts the title LEFT and content RIGHT of
-  // a centred VERTICAL divider. On mobile that divider is HORIZONTAL at viewport
-  // centre (drawn by the Shell, fixed, 4rem-inset each side). So each slide
-  // stacks AROUND that line: title in the TOP half (bottom-aligned, ending just
-  // above the line), content in the BOTTOM half (top-aligned, starting just
-  // below it). Slide draws NO line of its own — the Shell's fixed line is it.
+  // MOBILE (≤768px): keep the SAME side-by-side layout as desktop — title LEFT,
+  // content RIGHT of the centred VERTICAL divider — just SHRUNK to fit a phone.
+  // Researched mobile type scale (learnui.design / Pimp My Type / others): page
+  // titles ~30px, hero ~36px, body ~16px, smaller gaps, narrower columns.
   // ---------------------------------------------------------------------------
   @media (max-width: 768px) {
-    // each slide stays a FULL-VIEWPORT panel (the deck swaps panels on swipe —
-    // see App.svelte); side gutters match the 4rem the Shell line is inset.
-    .slide {
-      align-items: stretch;
-      padding: 0 4rem;
-      box-sizing: border-box;
-    }
-
-    // two equal halves around the centre line: [title half] [gap] [content half].
-    // The middle 0-height track sits exactly on the viewport centre where the
-    // Shell's fixed horizontal line is; a small row-gap keeps text off the line.
-    .grid {
-      grid-template-columns: 1fr;
-      grid-template-rows: 1fr 0 1fr;
-      row-gap: 1.5rem;
-      align-items: stretch;
-      height: 100%;
-    }
-
-    // TITLE — top half, bottom-aligned so it sits just above the centre line.
-    .title-mask {
-      grid-row: 1;
-      justify-self: stretch;
-      align-self: end;
-    }
+    // tighten the side gaps to the divider so the two narrow columns fit 375px.
+    // allow the title to WRAP (desktop keeps it on one line, but "Skills & Tools"
+    // / "Google Drive Clone" overflow the narrow left column on a phone).
     .title {
-      text-align: left;
-      padding-right: 0;
-      font-size: 2.6rem;
-      white-space: normal; // wrap on narrow screens
-      line-height: 1.1;
+      padding-right: 1rem;
+      font-size: 1.875rem; // ~30px (mobile page title)
+      white-space: normal;
     }
     .title.hero {
-      font-size: 3.4rem;
+      font-size: 2.25rem; // ~36px (mobile H1 cap)
     }
 
-    // the per-slide spacer is not used on mobile (the Shell draws the line).
+    // shrink the divider spacer to the mobile divider width.
     .spacer {
-      display: none;
+      width: 4px;
     }
 
-    // CONTENT — fills the bottom-half grid track so its inner scroller can cap to
-    // that height and scroll. align-self:stretch (default) + height:100% +
-    // min-height:0 are what let overflow:auto actually engage inside a grid track.
+    // the content column fills its grid track (the right 1fr) and is capped there
+    // — width:100% + min-width:0 stop the flex content from widening it past the
+    // track (which would push the box partly off-screen on a narrow phone).
     .content-col {
-      grid-row: 3;
       width: 100%;
       max-width: 100%;
-      min-width: 0; // don't let flex content widen the column past the grid track
+      min-width: 0;
       gap: 0.75rem;
-      align-items: flex-start;
-      height: 100%;
-      min-height: 0;
     }
     .content {
-      padding-left: 0;
-      padding-right: 0;
-      max-width: 100%;
-      min-width: 0; // allow the content to shrink to the column width
-    }
-    // scrollable content fills the col (flex:1) and scrolls internally if the
-    // list is taller than the bottom half. min-height:0 is required for the
-    // flex child to be allowed to shrink below its content size.
-    .content.scrollable {
-      flex: 1;
-      height: auto;
-      min-height: 0;
-      max-height: 100%;
-      overflow-y: auto;
-      cursor: default;
+      // smaller gap from the divider; mirror the title's right padding.
+      padding-left: 1rem;
+      padding-right: 0.75rem;
+      font-size: 1rem; // ~16px body
+      min-width: 0; // let the content shrink to the column, wrapping its lines
     }
     // the side scroll-hint (a desktop affordance) takes no room on mobile.
     .hint-slot {
