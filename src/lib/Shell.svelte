@@ -118,6 +118,7 @@
   .shell {
     position: relative;
     min-height: 100vh;
+    min-height: 100dvh; // track the mobile URL-bar collapse
     width: 100%;
     overflow: hidden;
   }
@@ -186,6 +187,7 @@
     left: 0;
     width: 20px;
     height: 100%;
+    height: 100dvh; // span the full (URL-bar-aware) viewport, no snap on scroll
     background-color: var(--color-ink);
   }
 
@@ -261,28 +263,17 @@
   }
 
   // ---------------------------------------------------------------------------
-  // MOBILE (≤768px): SAME layout as desktop — vertical divider, title left /
-  // content right — just SHRUNK. The divider gets shorter + thinner, and every
-  // decorative element (left wall, left/bottom-left dots, sticks + their dots,
-  // the "+", the inner scroll indicator) is scaled down so the side-by-side
-  // layout fits a phone without crowding.
+  // MOBILE (≤768px): HORIZONTAL split — each slide draws its OWN horizontal
+  // separator line (title above / content below; see Slide.svelte). So the
+  // Shell's fixed VERTICAL divider + its inner scroll-indicator are hidden here.
+  // Every decorative element (left wall, the "+", left/bottom-left dots, sticks)
+  // is scaled down — kept, not removed.
   // ---------------------------------------------------------------------------
   @media (max-width: 768px) {
-    // shorter divider on phones: --divider-height drives BOTH the line length and
-    // the scrollable content height (Slide.svelte), so shrinking it here keeps
-    // the line a sensible fraction of a short screen and shrinks the content box.
-    .shell {
-      --divider-height: 12rem; // ~192px (was 18rem) — fits a phone
-    }
-    // thinner vertical divider
-    .center-divider {
-      width: 4px;
-      height: var(--divider-height);
-    }
-
-    // thinner inner scroll-indicator (still vertical: top/middle/bottom).
-    .inner-line {
-      width: 2px;
+    // hide the fixed vertical divider + indicator — the per-slide horizontal
+    // line replaces them. (App's mobile load branch skips animating the divider.)
+    .divider-anchor {
+      display: none;
     }
 
     // slimmer left edge wall

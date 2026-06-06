@@ -80,6 +80,7 @@
 <style lang="scss">
   .slide {
     height: 100vh;
+    height: 100dvh; // mobile: track the URL-bar collapse so the slide is 1 screen
     display: flex;
     align-items: center;
   }
@@ -172,48 +173,98 @@
   }
 
   // ---------------------------------------------------------------------------
-  // MOBILE (≤768px): keep the SAME side-by-side layout as desktop — title LEFT,
-  // content RIGHT of the centred VERTICAL divider — just SHRUNK to fit a phone.
-  // Researched mobile type scale (learnui.design / Pimp My Type / others): page
-  // titles ~30px, hero ~36px, body ~16px, smaller gaps, narrower columns.
+  // MOBILE (≤768px): HORIZONTAL split — the separator is a horizontal line across
+  // the slide; the TITLE sits ABOVE it and the CONTENT BELOW it (full width). The
+  // whole title+line+content block is vertically CENTRED in the slide. Slides
+  // change on a left/right swipe (App.svelte); content scrolls up/down inside.
+  // Type scale researched (learnui.design / Pimp My Type / 3 others): hero ~36px,
+  // titles ~30px, body ~16px.
   // ---------------------------------------------------------------------------
   @media (max-width: 768px) {
-    // tighten the side gaps to the divider so the two narrow columns fit 375px.
-    // allow the title to WRAP (desktop keeps it on one line, but "Skills & Tools"
-    // / "Google Drive Clone" overflow the narrow left column on a phone).
+    .slide {
+      align-items: stretch;
+      padding: 4.5rem 1.5rem 3rem; // clear the top furniture + side gutters
+      box-sizing: border-box;
+    }
+
+    // single column; three rows: [title half][line][content half]. The two 1fr
+    // halves are EQUAL, with the line between them at the vertical centre — so the
+    // title (bottom-aligned in its half) and content (top-aligned in its half)
+    // sit equidistant from the line. Fixes the "text sits low / unbalanced" issue.
+    .grid {
+      grid-template-columns: 1fr;
+      grid-template-rows: 1fr auto 1fr;
+      align-items: stretch;
+      justify-items: stretch;
+      row-gap: 1rem;
+      height: 100%;
+    }
+
+    // TITLE — bottom of the top half, so it ends just above the line.
+    .title-mask {
+      grid-row: 1;
+      justify-self: stretch;
+      align-self: end;
+      overflow: visible;
+    }
     .title {
-      padding-right: 1rem;
-      font-size: 1.875rem; // ~30px (mobile page title)
+      text-align: left;
+      padding-right: 0;
+      font-size: 1.875rem; // ~30px
       white-space: normal;
+      line-height: 1.1;
     }
     .title.hero {
-      font-size: 2.25rem; // ~36px (mobile H1 cap)
+      font-size: 2.25rem; // ~36px hero
     }
 
-    // shrink the divider spacer to the mobile divider width.
+    // SPACER becomes the horizontal separator line itself (the Shell's fixed
+    // vertical divider is hidden on mobile — see Shell.svelte). 4rem inset each
+    // side via the slide padding above + this margin keeps it off the edges.
     .spacer {
-      width: 4px;
+      grid-row: 2;
+      width: 100%;
+      height: 4px;
+      background-color: var(--color-ink);
+      border-radius: 999px;
     }
 
-    // the content column fills its grid track (the right 1fr) and is capped there
-    // — width:100% + min-width:0 stop the flex content from widening it past the
-    // track (which would push the box partly off-screen on a narrow phone).
+    // CONTENT — below the line, full width, fills the remaining row and scrolls.
     .content-col {
+      grid-row: 3;
       width: 100%;
       max-width: 100%;
       min-width: 0;
-      gap: 0.75rem;
+      height: 100%;
+      min-height: 0;
+      gap: 0;
     }
     .content {
-      // smaller gap from the divider; mirror the title's right padding.
-      padding-left: 1rem;
-      padding-right: 0.75rem;
+      padding-left: 0;
+      padding-right: 0;
       font-size: 1rem; // ~16px body
-      min-width: 0; // let the content shrink to the column, wrapping its lines
+      min-width: 0;
     }
-    // the side scroll-hint (a desktop affordance) takes no room on mobile.
+    .content.scrollable {
+      flex: 1;
+      height: auto;
+      min-height: 0;
+      max-height: 100%;
+      overflow-y: auto;
+    }
+    // the content-col stacks the content over the hint on mobile (vs side-by-side
+    // on desktop) so the scroll hint sits centred BELOW the scrollable content.
+    .content-col {
+      flex-direction: column;
+      align-items: center;
+    }
+    .content {
+      width: 100%;
+    }
     .hint-slot {
-      display: none;
+      // shown only when content overflows (the hint itself self-hides otherwise);
+      // a small centred "Scroll" cue under the list.
+      margin-top: 0.25rem;
     }
   }
 </style>

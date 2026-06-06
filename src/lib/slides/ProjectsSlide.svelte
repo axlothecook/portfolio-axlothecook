@@ -303,23 +303,33 @@
     }
   }
 
-  // MOBILE (≤768px): shrink the project rows to the ~16px body scale, and let a
-  // row + its badge cluster WRAP so a long badge list (e.g. Archery's 9) flows
-  // onto multiple lines within the narrow content column instead of overflowing.
+  // MOBILE (≤768px): now the content is FULL-WIDTH (horizontal split), so each
+  // project is ONE horizontal row — name then its badges on a single line. If a
+  // long badge list overflows, that row scrolls SIDEWAYS (no wrapping into many
+  // rows, which was the visual clutter). Body ~16px.
   @media (max-width: 768px) {
     .project {
       font-size: 1rem; // ~16px body
     }
     .row {
-      flex-wrap: wrap;
+      flex-wrap: nowrap; // keep name + badges on one line
       width: 100%;
       max-width: 100%;
+      overflow-x: auto; // overflowing badges scroll sideways instead of wrapping
+      overflow-y: hidden;
+      scrollbar-width: none; // hide the row's own scrollbar (Firefox)
+      &::-webkit-scrollbar {
+        display: none; // hide it (WebKit)
+      }
+    }
+    .name {
+      white-space: nowrap; // don't let the name wrap mid-row
+      flex: 0 0 auto;
     }
     .tech {
-      flex-wrap: wrap;
-      row-gap: 0.35rem;
+      flex: 0 0 auto; // badges keep their size; the row scrolls if needed
+      flex-wrap: nowrap;
     }
-    // smaller badge boxes so more fit per line
     .badge {
       --badge-size: 1.05em;
     }

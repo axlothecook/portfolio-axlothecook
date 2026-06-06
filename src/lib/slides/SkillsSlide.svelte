@@ -26,6 +26,12 @@
     line-height: 1.2; // enough for wrapping skill lines without inflating row gap
   }
 
+  // category name (Languages:, Frameworks:, …) — slightly bolder than the listed
+  // items so it reads as a heading for its line.
+  .label {
+    font-weight: 500;
+  }
+
   // MOBILE (≤768px): shrink to the ~16px body scale + tighter row gap.
   @media (max-width: 768px) {
     .list {

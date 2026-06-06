@@ -153,10 +153,11 @@
     if (e.key === 'ArrowUp' || e.key === 'PageUp') go(-1)
   }
 
-  // Touch (phone): swipe UP = next slide, swipe DOWN = previous (same up/down
-  // model as the desktop wheel). Only act when the gesture is dominantly
-  // vertical AND the content under it can't scroll further in that direction, so
-  // scrolling inside a content div never flips a slide.
+  // Touch (phone): slides change on a HORIZONTAL swipe — swipe LEFT = next,
+  // swipe RIGHT = previous. We act ONLY on a dominantly-horizontal gesture, so
+  // VERTICAL scrolling is left entirely to the browser (the content divs scroll
+  // up/down natively). This is what avoids hijacking the page scroll — fixing the
+  // scroll-up-reloads / page-extends bugs that the up/down handler caused.
   let touchStartX = 0
   let touchStartY = 0
   function onTouchStart(e: TouchEvent) {
@@ -167,21 +168,10 @@
     if (loadLocked) return
     const dx = touchStartX - e.changedTouches[0].clientX
     const dy = touchStartY - e.changedTouches[0].clientY
-    // ignore dominantly-horizontal gestures and small movements
-    if (Math.abs(dy) < 40 || Math.abs(dy) < Math.abs(dx)) return
-    const dir: 1 | -1 = dy > 0 ? 1 : -1
-
-    // if the content under the touch can still scroll this way, let it scroll
-    const scroller = (e.target as HTMLElement)?.closest?.('.content.scrollable') as
-      | HTMLElement
-      | null
-    if (scroller) {
-      const atTop = scroller.scrollTop <= 0
-      const atBottom = scroller.scrollTop + scroller.clientHeight >= scroller.scrollHeight - 1
-      const canScroll = dir > 0 ? !atBottom : !atTop
-      if (canScroll) return
+    // only a dominantly-horizontal swipe past the threshold changes a slide
+    if (Math.abs(dx) > 45 && Math.abs(dx) > Math.abs(dy) * 1.3) {
+      go(dx > 0 ? 1 : -1) // content moves left → next slide
     }
-    go(dir)
   }
 
   // mobile = the same ≤768px breakpoint the CSS uses. On mobile the layout is
@@ -291,52 +281,67 @@
     })
   }
 
-  // MOBILE load intro (≤768px): NO wizard, but the layout is the same as desktop
-  // (vertical divider, title LEFT / content RIGHT), just smaller. So:
-  //   1. a dot drops from off-screen top to the centre
-  //   2. one small bounce
-  //   3. a splash squash, then it stretches VERTICALLY into the divider line
-  //   4. meanwhile the shell furniture fades into place
-  //   5. then "Welcome" slides in from the right side of the line + the tagline
-  //      slides in from the left (a fade+slide, no masking needed)
+  // MOBILE load intro (≤768px): NO wizard, and the divider is HIDDEN (each slide
+  // draws its own horizontal separator). So this is a clean fade-in:
+  //   1. the shell furniture + the bottom-right sticks fade into place
+  //   2. the horizontal separator line "grows" out from its centre
+  //   3. "Welcome" (title) slides down from above the line; the tagline rises up
+  //   4. the perpetual furniture motions start (spinning "+", bouncing stick
+  //      dots, the bottom-left Newton's cradle) so the page isn't static.
   function playMobileLoad() {
     const welcome = panels[0]
     const title = welcome?.querySelector('.title') as HTMLElement | null
     const tagline = welcome?.querySelector('.tagline') as HTMLElement | null
-    if (!dividerEl) return
+    const line = welcome?.querySelector('.spacer') as HTMLElement | null
 
-    const dropFrom = -(window.innerHeight / 2 + 100) // off-screen above centre
-    const BALL = 12 // ball diameter (px) — a touch smaller for phones
-    const LINE_W = 4 // final line width (px) — matches mobile .center-divider
-    const lineH = dividerEl.offsetHeight || 200 // mobile divider height (CSS)
-
-    // initial states: divider = ball off-screen above; furniture + text hidden.
-    gsap.set(dividerEl, { width: BALL, height: BALL, y: dropFrom, x: 0 })
+    // initial states: furniture + sticks + text hidden; the line scaled to 0 width.
     if (furnitureEl) gsap.set(furnitureEl, { autoAlpha: 0 })
-    // title/tagline tucked toward the divider, transparent (slide in from sides).
-    if (title) gsap.set(title, { x: 30, autoAlpha: 0 })
-    if (tagline) gsap.set(tagline, { x: -30, autoAlpha: 0 })
+    if (sticksEl) gsap.set(sticksEl, { autoAlpha: 0 }) // bottom-right fades in too
+    if (line) gsap.set(line, { scaleX: 0, transformOrigin: '50% 50%' })
+    if (title) gsap.set(title, { y: -24, autoAlpha: 0 })
+    if (tagline) gsap.set(tagline, { y: 24, autoAlpha: 0 })
 
     const tl = gsap.timeline({
       onComplete() {
-        loadLocked = false // front page fully shown — allow scrolling
+        loadLocked = false // front page fully shown — allow swiping
+        startMobileFurnitureMotion() // perpetual: spin, bounce, cradle
       },
     })
 
-    // 1) drop to centre
-    tl.to(dividerEl, { y: 0, duration: 0.7, ease: 'power2.in' })
-    // 2) one small bounce
-    tl.to(dividerEl, { y: -90, duration: 0.4, ease: 'power2.out' })
-    tl.to(dividerEl, { y: 0, duration: 0.34, ease: 'power2.in' })
-    // 3) splash squash (flatten), then stretch VERTICALLY into the divider line
-    tl.to(dividerEl, { width: BALL + 6, height: BALL - 5, duration: 0.12, ease: 'power2.out' })
-    tl.to(dividerEl, { width: LINE_W, height: lineH, duration: 0.7, ease: 'power3.inOut' })
-    // 4) furniture fades into place once the line has formed
-    if (furnitureEl) tl.to(furnitureEl, { autoAlpha: 1, duration: 0.6 }, '>-0.1')
-    // 5) Welcome slides in from the right of the line; tagline from the left.
-    tl.addLabel('textIn', '+=0.1')
-    if (title) tl.to(title, { x: 0, autoAlpha: 1, duration: 0.7, ease: 'power3.out' }, 'textIn')
-    if (tagline) tl.to(tagline, { x: 0, autoAlpha: 1, duration: 0.7, ease: 'power3.out' }, 'textIn+=0.2')
+    // 1) furniture + bottom-right sticks fade in
+    if (furnitureEl) tl.to(furnitureEl, { autoAlpha: 1, duration: 0.6 })
+    if (sticksEl) tl.to(sticksEl, { autoAlpha: 1, duration: 0.6 }, '<')
+    // 2) the horizontal separator grows out from its centre
+    if (line) tl.to(line, { scaleX: 1, duration: 0.6, ease: 'power3.out' }, '<0.1')
+    // 3) title drops in from above the line; tagline rises from below
+    tl.addLabel('textIn', '>-0.1')
+    if (title) tl.to(title, { y: 0, autoAlpha: 1, duration: 0.6, ease: 'power3.out' }, 'textIn')
+    if (tagline) tl.to(tagline, { y: 0, autoAlpha: 1, duration: 0.6, ease: 'power3.out' }, 'textIn+=0.15')
+  }
+
+  // Perpetual decorative motion on MOBILE (no wizard to wire it up). Spins the
+  // "+", bounces each bottom-right stick dot, and runs a simple bob on the
+  // bottom-left dot stack — so the corners aren't static.
+  function startMobileFurnitureMotion() {
+    // the "+" spins forever (snappy pulse like desktop)
+    if (plusEl) {
+      gsap.set(plusEl, { transformOrigin: '50% 50%' })
+      gsap.to(plusEl, { rotation: '+=360', duration: 0.8, ease: 'power3.inOut', repeat: -1, repeatDelay: 0.5 })
+    }
+    // each bottom-right stick dot does the gravity bounce (staggered)
+    if (sticksEl) {
+      const dots = Array.from(sticksEl.querySelectorAll('.dot')) as HTMLElement[]
+      dots.forEach((dot, i) => {
+        gsap.delayedCall(i * 0.35, () => startDotBounce(dot))
+      })
+    }
+    // the bottom-left dot stack gently bobs the top dot (a light, simple loop)
+    if (bottomDotsEl) {
+      const dots = Array.from(bottomDotsEl.querySelectorAll('.dot')) as HTMLElement[]
+      if (dots.length) {
+        gsap.to(dots[0], { y: -8, duration: 0.9, ease: 'sine.inOut', yoyo: true, repeat: -1 })
+      }
+    }
   }
 
   // The page-load sequence:
@@ -1092,6 +1097,7 @@
   .deck {
     position: relative;
     height: 100vh;
+    height: 100dvh; // track the mobile URL-bar collapse (no extended area)
     overflow: hidden;
   }
 

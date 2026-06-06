@@ -66,6 +66,16 @@ body {
   background-color: var(--color-bg);
   color: var(--color-ink);
   font-family: var(--font-primary);
+  // Lock the page so the BODY itself never scrolls/bounces — only the in-slide
+  // `.content.scrollable` divs scroll. This stops the mobile bugs where pulling
+  // the page extended it / hid the URL bar / triggered pull-to-refresh on
+  // scroll-up. The deck is a fixed-height (100vh) stage; content scrolls inside.
+  overflow: hidden;
+  // dvh = dynamic viewport height: tracks the mobile URL-bar collapse so the
+  // stage stays exactly one screen tall (no extra extended area).
+  height: 100dvh;
+  // no rubber-band overscroll / pull-to-refresh chaining to the page
+  overscroll-behavior: none;
 }
 
 // ---------------------------------------------------------------------------

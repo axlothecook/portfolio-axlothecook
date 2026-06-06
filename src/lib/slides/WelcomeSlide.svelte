@@ -31,15 +31,16 @@
     line-height: 1;
   }
 
-  // Bigger fonts, with weight scaling up with size (bigger = thicker).
+  // Bigger fonts, with weight scaling up with size (bigger = thicker). line-1 and
+  // line-2 are bumped heavier so the three rows read as a clearer hierarchy.
   .line-1 {
     font-size: 4rem;
-    font-weight: 500;
+    font-weight: 600;
   }
 
   .line-2 {
     font-size: 3rem;
-    font-weight: 400;
+    font-weight: 500;
   }
 
   .line-3 {
