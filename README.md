@@ -6,7 +6,7 @@ skills, and background. It opens with a GSAP "wizard" load animation that builds
 the page furniture, and has a light/dark theme toggle plus a placeholder
 "Animated" mode (a richer Three.js-style render planned for later).
 
-**Live (planned):** https://portfolio.axlothecook.com
+**Live:** https://portfolio.axlothecook.com (Cloudflare Pages, auto-deploys on push to `main`)
 
 ## Design
 
@@ -99,6 +99,6 @@ No `_redirects` / SPA fallback is needed — there is only the `/` route.
       through its breakpoint mixins (`src/styles/_responsive.scss`).
 - [x] Trim the CSS bundle — dropped the full library `@import` (kept only the
       breakpoint mixins): **2.5 MB → 54 kB**.
+- [x] Deploy to `portfolio.axlothecook.com` (Cloudflare Pages — auto-deploys on push to `main`).
 - [ ] Three.js render for the "Animated" mode (post-launch).
-- [ ] Deploy to `portfolio.axlothecook.com` (Cloudflare Pages — see above).
 - [ ] Deploy to `portfolio.axlothecook.com`.
