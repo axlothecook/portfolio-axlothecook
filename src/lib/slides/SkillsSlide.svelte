@@ -3,7 +3,7 @@
   import { skills } from '../../data/skills'
 </script>
 
-<Slide title="Skills & Tools" scrollable>
+<Slide title="Skills & Tools" scrollable compact>
   <ul class="list">
     {#each skills as group}
       <li class="line">
@@ -33,22 +33,15 @@
   }
 
   // MOBILE (≤768px): shrink to the ~16px body scale + tighter row gap; centre
-  // each skill line. Cap the LIST ~20% shorter than the available content half
-  // (per request) and let it scroll itself — so the Skills data reads as a
-  // compact scrollable block rather than a tall one running toward the bottom
-  // furniture. (80% of the content half ≈ 80% of the bottom grid row height.)
+  // each skill line. (The ~20% height shorten is done on Slide's
+  // .content.scrollable so it stays the single scroller — which keeps the scroll
+  // hint working, since the hint watches that element for overflow.)
   @media (max-width: 768px) {
     .list {
       font-size: 1rem; // ~16px body
       gap: 0.7rem;
       align-items: center;
       text-align: center;
-      max-height: 80%;
-      overflow-y: auto;
-      scrollbar-width: none;
-      &::-webkit-scrollbar {
-        display: none;
-      }
     }
   }
 </style>

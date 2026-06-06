@@ -15,9 +15,10 @@
     title: string
     hero?: boolean // the Welcome slide uses an extra-large title
     scrollable?: boolean // data slides scroll on overflow; Welcome does not
+    compact?: boolean // mobile: cap the scrollable area shorter (e.g. Skills)
     children?: import('svelte').Snippet
   }
-  let { title, hero = false, scrollable = false, children }: Props = $props()
+  let { title, hero = false, scrollable = false, compact = false, children }: Props = $props()
 
   let contentEl: HTMLElement | undefined = $state()
   let overflows = $state(false)
@@ -60,7 +61,7 @@
     </div>
     <div class="spacer"></div>
     <!-- content sits in a left-clipped mask for the same reason -->
-    <div class="content-col">
+    <div class="content-col" class:compact>
       <div
         class="content slide-text"
         class:scrollable
@@ -265,6 +266,13 @@
       min-height: 0;
       max-height: 100%;
       overflow-y: auto;
+    }
+    // `compact` slides (e.g. Skills) cap the scrollable ~20% shorter so the data
+    // reads as a compact block (not running toward the bottom furniture). It's
+    // still the SINGLE scroller, so the overflow-driven scroll hint keeps working.
+    .content-col.compact .content.scrollable {
+      flex: 0 1 auto;
+      max-height: 80%;
     }
     // the content-col stacks the content over the hint on mobile (vs side-by-side
     // on desktop) so the scroll hint sits centred BELOW the scrollable content.
