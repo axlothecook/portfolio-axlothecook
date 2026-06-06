@@ -4,6 +4,7 @@
   import Shell from './lib/Shell.svelte'
   import IconSprite from './lib/IconSprite.svelte'
   import Character from './lib/Character.svelte'
+  import AnimatedScreen from './lib/AnimatedScreen.svelte'
   import WelcomeSlide from './lib/slides/WelcomeSlide.svelte'
   import ProjectsSlide from './lib/slides/ProjectsSlide.svelte'
   import SkillsSlide from './lib/slides/SkillsSlide.svelte'
@@ -25,6 +26,12 @@
   const FADE_IN = 1.1
 
   let currentIndex = $state(0)
+
+  // Display mode: the top-bar toggle switches between the normal portfolio
+  // ("straightforward") and the "animated" placeholder screen. Lifted here so it
+  // can hide/show the whole page. The toggle (top bar) stays visible in both.
+  type Mode = 'straightforward' | 'animated'
+  let mode = $state<Mode>('straightforward')
 
   // The indicator label is driven by the GSAP timeline (not reactively) so it
   // stays in sync: it swaps at the midpoint of the transition, between the
@@ -52,9 +59,10 @@
   // We try both to compare.
   const WELCOME_LEADS = true
   let animating = false
-  // Locked during the page-load animation: no scrolling / slide changes until
-  // the whole front page is visible.
-  let loadLocked = true
+  // Locked during the page-load animation: no scrolling / slide changes — and the
+  // Animated-mode toggle is disabled — until the whole front page is visible.
+  // ($state so the toggle's disabled state updates when the load completes.)
+  let loadLocked = $state(true)
 
   // Move to an adjacent slide. Locked while animating so one gesture = one
   // slide change. SEQUENCED: the current text drifts up + fades OUT fully,
@@ -903,7 +911,14 @@
   <div class="split-ball" bind:this={splitBalls[i]}></div>
 {/each}
 
-<Shell indicator={displayedLabel} bind:indicatorEl bind:dividerEl bind:furnitureEl bind:sticksEl bind:topBarEl bind:leftBarEl bind:plusEl bind:topDotsEl bind:bottomDotsEl>
+<!-- ANIMATED MODE: a full-screen placeholder overlay (animated gradient bg +
+     "Coming soon"). Covers everything EXCEPT the top-bar toggle, which stays on
+     top so the user can switch back. -->
+{#if mode === 'animated'}
+  <AnimatedScreen />
+{/if}
+
+<Shell {mode} onModeChange={(m) => (mode = m)} animatedLocked={loadLocked} indicator={displayedLabel} bind:indicatorEl bind:dividerEl bind:furnitureEl bind:sticksEl bind:topBarEl bind:leftBarEl bind:plusEl bind:topDotsEl bind:bottomDotsEl>
   <div
     class="deck"
     role="region"
