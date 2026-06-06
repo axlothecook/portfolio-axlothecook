@@ -165,7 +165,8 @@
     // symmetric vertical padding so the first and last visible rows sit equally
     // far from the top and bottom of the box
     padding-block: 10px;
-    cursor: pointer; // pointer cursor over the scrollable divs
+    // the scrollable area itself isn't clickable — only project ROWS are (they
+    // set their own pointer cursor). So it uses the default cursor here.
   }
 
   // reserves no space when empty; the hint shows only on overflow

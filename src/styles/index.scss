@@ -61,6 +61,14 @@ body {
   height: 100%;
 }
 
+// Kill the mobile browser's blue tap-highlight everywhere — tapping a div to
+// scroll it (or anywhere on the page) should never flash. Interactive elements
+// that DO need feedback provide their own (the gold project-row highlight, the
+// modal, etc.).
+* {
+  -webkit-tap-highlight-color: transparent;
+}
+
 body {
   margin: 0;
   background-color: var(--color-bg);
