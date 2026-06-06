@@ -10,7 +10,7 @@
 <svg
   width={size}
   height={size}
-  viewBox="0 -3 20 20"
+  viewBox="0 3 20 14"
   fill="currentColor"
   xmlns="http://www.w3.org/2000/svg"
   aria-hidden="true"

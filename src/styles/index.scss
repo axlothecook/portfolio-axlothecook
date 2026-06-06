@@ -33,6 +33,9 @@ $text: #34302d; // ink (body text)
 
   --color-cream: #f3eee5; // warm-cream white (alternative bg, kept for later)
 
+  // Gold accent — used to highlight the hovered project row (text + icons).
+  --color-gold: #b8860b; // deep gold, legible on the light cream/grey bg
+
   // Active font = Manrope. Backup candidate = 'Space Grotesk' (swap to compare).
   --font-primary: 'Manrope', system-ui, sans-serif;
 
@@ -47,6 +50,7 @@ $text: #34302d; // ink (body text)
   --color-navbar: #2a2926; // navbar surface (slightly lighter than bg)
   --color-ink: #ececec; // light ink on dark
   // --color-ink-soft stays #34302d as the constant dark accent (left wall etc.)
+  --color-gold: #e0b84a; // brighter gold so it reads against the dark bg
 }
 
 // ---------------------------------------------------------------------------
