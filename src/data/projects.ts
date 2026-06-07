@@ -67,7 +67,7 @@ export const projects: Project[] = [
     summary:
       'A full-stack e-commerce shop demo. Self-hosted on a Pi through a containerised custom CI/CD pipeline.',
     liveUrl: 'https://gameshop.axlothecook.com',
-    // repoUrl pending (to be provided).
+    repoUrl: 'https://github.com/axlothecook/gameshop',
   },
   {
     name: 'Google Drive Clone',
