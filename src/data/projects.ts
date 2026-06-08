@@ -70,15 +70,6 @@ export const projects: Project[] = [
     repoUrl: 'https://github.com/axlothecook/gameshop',
   },
   {
-    name: 'Google Drive Clone',
-    // Small-Google-Drive: Express + Prisma + Postgres + Supabase storage + Passport auth.
-    tech: ['JS', 'Express', 'Prisma', 'PostgreSQL', 'Supabase'],
-    summary:
-      'A Google-Drive-style file manager with user authentication and cloud file storage.',
-    liveUrl: 'https://small-google-drive-production.up.railway.app/',
-    repoUrl: 'https://github.com/axlothecook/Small-Google-Drive',
-  },
-  {
     name: 'CV Maker',
     // Create_Resume: React + MUI FE, Express + Mongo BE, auth, PDF export.
     // Now self-hosted on the Pi via Docker Compose + GitHub Actions CI/CD + GHCR +
