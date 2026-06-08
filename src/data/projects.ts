@@ -80,12 +80,15 @@ export const projects: Project[] = [
   },
   {
     name: 'CV Maker',
-    // Create_Resume: React + MUI FE, Express + Mongo BE, auth, PDF export; Pi + CI/CD.
-    tech: ['JS', 'React', 'MUI', 'Express', 'MongoDB', 'Docker', 'RaspberryPi'],
+    // Create_Resume: React + MUI FE, Express + Mongo BE, auth, PDF export.
+    // Now self-hosted on the Pi via Docker Compose + GitHub Actions CI/CD + GHCR +
+    // Cloudflare Tunnel (same pipeline as Gaming Shop). repoUrl points at the umbrella
+    // repo (one link → frontend + backend + deploy).
+    tech: ['JS', 'React', 'MUI', 'Express', 'MongoDB', 'Docker', 'GitHubActions', 'Cloudflare', 'RaspberryPi'],
     summary:
       'A full-stack résumé builder with live PDF export used to create professional CVs with user authentication. Self-hosted on a Pi through a containerised custom CI/CD pipeline.',
-    liveUrl: 'https://editcv.netlify.app',
-    repoUrl: 'https://github.com/axlothecook/Create_Resume',
+    liveUrl: 'https://resume.axlothecook.com',
+    repoUrl: 'https://github.com/axlothecook/Create_Resume-umbrella',
   },
   {
     name: 'Sass Library',
