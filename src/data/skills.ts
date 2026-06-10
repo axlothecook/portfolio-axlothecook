@@ -15,7 +15,7 @@ export const skills: SkillGroup[] = [
   { label: 'Frameworks', items: 'Svelte / SvelteKit, React / React Router, Node.js, Express' },
   { label: 'Libraries', items: 'PDF generation (react-pdf), drag & drop (dnd-kit)' },
   { label: 'Styling', items: 'CSS3, Sass (own published library), Tailwind CSS, Material-UI' },
-  { label: 'Animation', items: 'GSAP, Motion' },
+  { label: 'Animation', items: 'GSAP, Motion, View Transitions API' },
   { label: 'Databases', items: 'PostgreSQL, MongoDB' },
   { label: 'ORM / data', items: 'Prisma, Mongoose, REST APIs, Zod' },
   { label: 'Auth & security', items: 'Passport.js, JWT, argon2 / bcrypt, Helmet, rate limiting, Cloudflare Turnstile' },

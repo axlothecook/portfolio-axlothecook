@@ -56,8 +56,10 @@ export const projects: Project[] = [
     // summary describes WHAT the project is; the tech badges cover the stack, so
     // no tool names here (CI/CD is kept as a concept, not a tool). The "Live" /
     // "Code" links are rendered from liveUrl/repoUrl, not written in the summary.
+    // The View Transitions API is named as a TECHNIQUE (not a stack badge), per the
+    // portfolio convention of describing notable techniques in the project text.
     summary:
-      'A full-stack website built for adoption by an official archery club in Croatia, with a public site and a private dashboard for admins. Self-hosted on a Pi through a containerised custom CI/CD pipeline.',
+      'A full-stack website built for adoption by an official archery club in Croatia, with a public site and a private dashboard for admins. Features fluid page animations powered by the browser View Transitions API and GSAP. Self-hosted on a Pi through a containerised custom CI/CD pipeline.',
     // liveUrl + repoUrl pending (not deployed yet / repo link to be provided).
   },
   {
