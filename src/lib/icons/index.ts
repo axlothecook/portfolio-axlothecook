@@ -11,6 +11,7 @@ import SassIcon from './SassIcon.svelte'
 import GulpIcon from './GulpIcon.svelte'
 import SvelteIcon from './SvelteIcon.svelte'
 import ReactIcon from './ReactIcon.svelte'
+import ThreeJsIcon from './ThreeJsIcon.svelte'
 import PostgreSQLIcon from './PostgreSQLIcon.svelte'
 import PrismaIcon from './PrismaIcon.svelte'
 import MongoDBIcon from './MongoDBIcon.svelte'
@@ -43,6 +44,7 @@ export const techIcons: Record<Tech, { component: Component<IconProps>; label: s
   Gulp: { component: GulpIcon, label: 'Gulp' },
   Svelte: { component: SvelteIcon, label: 'Svelte' },
   React: { component: ReactIcon, label: 'React' },
+  Three: { component: ThreeJsIcon, label: 'Three.js' },
   PostgreSQL: { component: PostgreSQLIcon, label: 'PostgreSQL' },
   Prisma: { component: PrismaIcon, label: 'Prisma' },
   MongoDB: { component: MongoDBIcon, label: 'MongoDB' },
