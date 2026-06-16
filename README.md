@@ -24,7 +24,7 @@ A fuller written spec (slide content, fixed shell, animations, colours) lives in
 | Bundler | **Vite 8** | Fast dev server + build. |
 | Language | **TypeScript** | Type safety. |
 | Styling | **Scoped SCSS** + [`axlothecook-sass-library`](https://github.com/axlothecook/axlothecook-sass-library) | Svelte scopes `<style>` natively; my own SCSS library provides the component/utility/colour system. No CSS-in-JS lib needed. |
-| 3D (later) | **Three.js** | Planned hero/background render. |
+| 3D (later) | **Three.js** | Planned hero/background render for the "Animated" mode. (Three.js / Threlte already ships in production in the Archery project — the interactive 3D bow viewer.) |
 
 ### How the Sass library is wired in
 
@@ -100,4 +100,3 @@ No `_redirects` / SPA fallback is needed — there is only the `/` route.
       breakpoint mixins): **2.5 MB → 54 kB**.
 - [x] Deploy to `portfolio.axlothecook.com` (Cloudflare Pages — auto-deploys on push to `main`).
 - [ ] Three.js render for the "Animated" mode (post-launch).
-- [ ] Deploy to `portfolio.axlothecook.com`.
