@@ -65,6 +65,80 @@
   // ($state so the toggle's disabled state updates when the load completes.)
   let loadLocked = $state(true)
 
+  // The desktop load timeline, captured so the Skip button can fast-forward it.
+  // `showSkip` drives the button: shown only while the DESKTOP wizard load is
+  // running (never on mobile — the wizard doesn't play there). Skipping seeks the
+  // timeline to its end, which lands every element at its final position and fires
+  // all the perpetual-motion starters, then runs the timeline's own onComplete.
+  let loadTl: gsap.core.Timeline | undefined
+  let showSkip = $state(false)
+
+  // SKIP: abandon the wizard show entirely. Every element SNAPS to its final
+  // resting state with NO animation — the only thing still played is the closing
+  // beat: Welcome + the tagline sliding out from behind the line. The perpetual
+  // idle motions (the "+" spin, stick-dot bounces, the Newton's cradle) start
+  // immediately, same as after the full animation.
+  function skipLoad() {
+    if (!loadTl) return
+    showSkip = false
+
+    // 1) stop EVERYTHING the load has started: the master timeline plus every
+    //    independent tween its callbacks spawned (rock chips, ball flights, …).
+    loadTl.kill()
+    loadTl = undefined
+    gsap.globalTimeline.getChildren(true, true, true).forEach((t) => t.kill())
+
+    // 2) throw away the wizard + his loose props (rocks, balls). The static shell
+    //    marks below replace the rock-formed ones (they're identical ink dots).
+    if (characterEl) gsap.set(characterEl, { autoAlpha: 0 })
+    if (rocksEl) rocksEl.replaceChildren()
+    if (projectileEl) gsap.set(projectileEl, { opacity: 0 })
+    splitBalls.forEach((b) => b && gsap.set(b, { opacity: 0 }))
+
+    // 3) SNAP the shell to its final state: clearing the inline (GSAP) styles
+    //    returns every piece to its plain-CSS resting layout — the line divider,
+    //    seated top pill, left wall in place, furniture visible, sticks standing.
+    const toClear = [dividerEl, furnitureEl, topBarEl, leftBarEl, sticksEl, plusEl, topDotsEl, bottomDotsEl]
+    toClear.forEach((el) => el && gsap.set(el, { clearProps: 'all' }))
+    if (sticksEl) {
+      const sticks = Array.from(sticksEl.querySelectorAll('.stick')) as HTMLElement[]
+      // clear ONLY the transforms — clearProps:'all' would wipe the whole inline
+      // style, including the markup-authored `--stick-height` var the line heights
+      // are built on (which collapsed the stick lines to zero).
+      sticks.forEach((s) => gsap.set(s, { clearProps: 'transform' }))
+      // the dots are CSS-hidden until the wizard lands balls on them — show them.
+      const dots = Array.from(sticksEl.querySelectorAll('.dot')) as HTMLElement[]
+      dots.forEach((d) => gsap.set(d, { opacity: 1, y: 0 }))
+    }
+
+    // 4) start the perpetual idle motions from rest (the same routine the mobile
+    //    load uses: "+" spin, staggered stick-dot bounces, Newton's cradle).
+    startMobileFurnitureMotion()
+
+    // 5) the ONLY animation kept: Welcome + tagline slide out from behind the
+    //    line (masked, no fade) — then the page unlocks.
+    const welcome = panels[0]
+    const grid = welcome?.querySelector('.grid') as HTMLElement | null
+    const title = welcome?.querySelector('.title') as HTMLElement | null
+    const tagline = welcome?.querySelector('.tagline') as HTMLElement | null
+    if (!grid || !title || !tagline) {
+      loadLocked = false
+      return
+    }
+    grid.classList.add('loading') // divider-edge masks for the slide-out
+    gsap.set(title, { x: title.offsetWidth + 40 }) // tucked behind the line (right)
+    gsap.set(tagline, { x: -(tagline.offsetWidth + 40) }) // tucked behind (left)
+    gsap
+      .timeline({
+        onComplete() {
+          grid.classList.remove('loading')
+          loadLocked = false
+        },
+      })
+      .to(title, { x: 0, duration: 1.0, ease: 'power3.out' })
+      .to(tagline, { x: 0, duration: 1.0, ease: 'power3.out' }, '<+=0.57')
+  }
+
   // Move to an adjacent slide. Locked while animating so one gesture = one
   // slide change. SEQUENCED: the current text drifts up + fades OUT fully,
   // THEN the next text rises from below + fades IN (no overlap; fade-in slower).
@@ -462,8 +536,12 @@
       onComplete() {
         grid.classList.remove('loading') // masks no longer needed
         loadLocked = false // the front page is fully visible — allow scrolling
+        showSkip = false // nothing left to skip
       },
     })
+    // expose the timeline to the Skip button + show it now that the load is running.
+    loadTl = tl
+    showSkip = true
 
     // 1) the ball drops from off-screen top to the centre
     tl.to(dividerEl, { y: 0, duration: 0.8, ease: 'power2.in' })
@@ -1047,6 +1125,13 @@
   <div class="split-ball" bind:this={splitBalls[i]}></div>
 {/each}
 
+<!-- SKIP button: fast-forwards the desktop load animation to its end. Only shown
+     while the wizard load is running; hidden on mobile via CSS (the wizard doesn't
+     play there, so there's nothing to skip). Bottom-right, bordered. -->
+{#if showSkip}
+  <button class="skip-load" type="button" onclick={skipLoad}>Skip</button>
+{/if}
+
 <!-- ANIMATED MODE: a full-screen placeholder overlay (animated gradient bg +
      "Coming soon"). Covers everything EXCEPT the top-bar toggle, which stays on
      top so the user can switch back. -->
@@ -1168,6 +1253,40 @@
     border-radius: 50%;
   }
 
+
+  // SKIP button: bottom-right, bordered, ink-coloured. Fixed above everything so
+  // it's clickable over the running animation. Hidden on mobile (≤sm) since the
+  // wizard load doesn't run there.
+  .skip-load {
+    position: fixed;
+    right: 1.5rem;
+    bottom: 1.5rem;
+    z-index: 10;
+    padding: 0.5rem 1.1rem;
+    font-family: inherit;
+    font-size: 0.95rem;
+    font-weight: 400;
+    letter-spacing: 0.02em;
+    color: var(--color-ink);
+    background: transparent;
+    border: 1px solid var(--color-ink);
+    border-radius: 8px;
+    cursor: pointer;
+    opacity: 0.7;
+    transition:
+      opacity 0.15s ease,
+      background-color 0.15s ease;
+  }
+  .skip-load:hover,
+  .skip-load:focus-visible {
+    opacity: 1;
+    background: color-mix(in srgb, var(--color-ink) 8%, transparent);
+  }
+  @include r.mobile {
+    .skip-load {
+      display: none; // no wizard load on mobile → nothing to skip
+    }
+  }
 
   // All slides stacked in the same place; GSAP fades between them.
   .deck {
