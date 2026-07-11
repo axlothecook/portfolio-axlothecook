@@ -4,7 +4,7 @@
   // Tagline rendered as three explicit lines with decreasing font sizes
   // (mirrors the Figma): row 1 biggest (but smaller than "Welcome"), row 3
   // smallest.
-  const taglineLines = ['To a place where', 'projects of passion', 'reside']
+  const taglineLines = ['To my energy drink', 'fuelled portfolio', 'page']
 </script>
 
 <Slide title="Welcome" hero>
@@ -69,10 +69,10 @@
     .line {
       white-space: normal;
     }
-    // line-1 ("To a place where") fills ONE row at the largest size it can. It's a
-    // long phrase (~2.4x wider than "Welcome"), so its one-row max is much
-    // smaller than the hero. Measured: it fills the content width at ~10.5vw, so
-    // that vw (capped) keeps it on a single line, edge-to-edge, never clipping.
+    // line-1 ("To my energy drink") fills ONE row at the largest size it can. It's a
+    // long phrase (much wider than "Welcome"), so its one-row max is much
+    // smaller than the hero. The vw size (capped) keeps it on a single line,
+    // edge-to-edge, never clipping.
     .line-1 {
       white-space: nowrap;
       font-size: min(10.5vw, 2.5rem);
