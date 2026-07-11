@@ -30,6 +30,7 @@ import GoogleTranslateIcon from './GoogleTranslateIcon.svelte'
 import GoogleMapsIcon from './GoogleMapsIcon.svelte'
 import YouTubeIcon from './YouTubeIcon.svelte'
 import BrevoIcon from './BrevoIcon.svelte'
+import ClaudeIcon from './ClaudeIcon.svelte'
 
 export interface IconProps {
   size?: number | string
@@ -62,6 +63,7 @@ export const techIcons: Record<Tech, { component: Component<IconProps>; label: s
   GoogleMaps: { component: GoogleMapsIcon, label: 'Google Maps' },
   YouTube: { component: YouTubeIcon, label: 'YouTube' },
   Brevo: { component: BrevoIcon, label: 'Brevo' },
+  Claude: { component: ClaudeIcon, label: 'Claude / Claude Code' },
   // Turnstile has no standalone logo — reuse the Cloudflare mark (it IS Cloudflare).
   Turnstile: { component: CloudflareIcon, label: 'Cloudflare Turnstile' },
   GitHubActions: { component: GitHubActionsIcon, label: 'GitHub Actions' },

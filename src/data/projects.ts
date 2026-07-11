@@ -30,6 +30,7 @@ export type Tech =
   | 'RaspberryPi'
   | 'PopOS'
   | 'Arch'
+  | 'Claude'
 
 export interface Project {
   name: string
@@ -52,7 +53,7 @@ export const projects: Project[] = [
     // Turnstile IS Cloudflare and reuses the same icon, so listing both rendered
     // the Cloudflare mark twice. Keep ONE Cloudflare badge and merge both labels
     // onto it via techLabels (below).
-    tech: ['TS', 'Svelte', 'Three', 'Sass', 'Express', 'Prisma', 'PostgreSQL', 'Cloudflare', 'GoogleTranslate', 'Brevo'],
+    tech: ['TS', 'Svelte', 'Three', 'Sass', 'Express', 'Prisma', 'PostgreSQL', 'Cloudflare', 'GoogleTranslate', 'Brevo', 'Claude'],
     techLabels: { Cloudflare: 'Cloudflare (incl. Turnstile)' },
     // summary describes WHAT the project is; the tech badges cover the stack, so
     // no tool names here (CI/CD is kept as a concept, not a tool). The "Live" /
@@ -60,7 +61,7 @@ export const projects: Project[] = [
     // The View Transitions API is named as a TECHNIQUE (not a stack badge), per the
     // portfolio convention of describing notable techniques in the project text.
     summary:
-      'A full-stack, bilingual (Croatian / English) website built for adoption by an official archery club in Croatia, featuring interactive 3D bow viewers and fluid page animations powered by the browser View Transitions API and GSAP. Self-hosted on a Pi through a containerised custom CI/CD pipeline.',
+      'A full-stack, bilingual (Croatian / English) website built for adoption by an official archery club in Croatia, featuring interactive 3D bow viewers and fluid page animations powered by the browser View Transitions API and GSAP. Includes a full admin dashboard for managing the club’s news, events, team, achievements, sponsors and inquiries, with email-based staff invites. Self-hosted on a Pi through a containerised custom CI/CD pipeline.',
     liveUrl: 'https://archery.axlothecook.com',
     // umbrella repo: links the front-end, back-end, and shared-contracts repos (deploy repo is private).
     repoUrl: 'https://github.com/axlothecook/Archery-club-umbrella',
