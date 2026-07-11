@@ -360,10 +360,11 @@
     }
   }
 
-  // MOBILE (≤768px): now the content is FULL-WIDTH (horizontal split), so each
-  // project is ONE horizontal row — name then its badges on a single line. If a
-  // long badge list overflows, that row scrolls SIDEWAYS (no wrapping into many
-  // rows, which was the visual clutter). Body ~16px.
+  // MOBILE (≤768px): the content is FULL-WIDTH, so each project is name + its
+  // badges. A long badge list (e.g. Archery's 11) used to scroll SIDEWAYS, which
+  // pushed the last badges (Brevo, Claude) off-screen where they were invisible.
+  // Now the row WRAPS: the name stays on line 1 and the badges flow onto as many
+  // lines as they need, so every badge is always visible on the phone. Body ~16px.
   @include r.mobile {
     // centre the list as a BLOCK (its widest row defines the block; rows align to
     // that block's left edge — so the group is centred under the line while each
@@ -377,27 +378,27 @@
     .project {
       font-size: 1rem; // ~16px body
     }
-    // each project = ONE horizontal row (name + badges) on a single line; a long
-    // badge list scrolls SIDEWAYS rather than wrapping. padding-block gives the
-    // text descenders (y, g, p) room so overflow-x clipping doesn't cut them.
+    // WRAP instead of side-scroll: name first, badges flow to new lines when they
+    // don't fit the screen width. align-items:flex-start so the name aligns to the
+    // TOP of a multi-line row (not vertically centred against the tall badge block).
     .row {
-      flex-wrap: nowrap;
+      flex-wrap: wrap;
+      align-items: flex-start;
       max-width: 100%;
-      padding-block: 0.15rem; // room for descenders inside the x-scroll box
-      overflow-x: auto; // overflowing badges scroll sideways instead of wrapping
-      overflow-y: hidden;
-      scrollbar-width: none; // hide the row's own scrollbar (Firefox)
-      &::-webkit-scrollbar {
-        display: none; // hide it (WebKit)
-      }
+      row-gap: 0.4rem; // space between wrapped lines
     }
     .name {
-      white-space: nowrap; // don't let the name wrap mid-row
+      white-space: nowrap; // don't let the name wrap mid-word
       flex: 0 0 auto;
+      // nudge the name down so it sits centred against the FIRST line of badges
+      // (the badges are a touch taller than the text glyph).
+      line-height: 1.15;
     }
     .tech {
-      flex: 0 0 auto; // badges keep their size; the row scrolls if needed
-      flex-wrap: nowrap;
+      flex: 1 1 auto; // take the remaining width so badges wrap within it
+      flex-wrap: wrap;
+      row-gap: 0.4rem;
+      min-width: 0;
     }
     .badge {
       --badge-size: 1.05em;
