@@ -13,9 +13,6 @@ Dark mode toggle <br />
 Loading animation <br />
 Skip button for animations <br />
 
-## Future updates
-Animated section with Three.js showcasing my best projects
-
 ## Design
 [Figma](https://www.figma.com/design/Yc4OGKSCCefIzgg2P9tXu6/Portfolio-Website?node-id=3-73&t=ALfNXldsPVyxVNo5-0)
 A fuller written spec (slide content, fixed shell, animations, colours) lives in [`docs/design-spec.md`](docs/design-spec.md) within the repo.
@@ -39,6 +36,11 @@ npm run preview  # preview the production build
 npm run check    # svelte-check + tsc type checking
 ```
 3) view live via localhost link from the terminal
+
+## Future updates
+<ul>
+   <li>Animated section with Three.js showcasing my best projects</li>
+</ul>
 
 ## Demo photos
 ### Dark mode landing page
