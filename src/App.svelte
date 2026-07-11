@@ -82,6 +82,10 @@
     if (!loadTl) return
     showSkip = false
 
+    // the load runs at a raised global timeScale — back to normal speed first so
+    // the slide-out below and the idle loops play at 1×.
+    gsap.globalTimeline.timeScale(1)
+
     // 1) stop EVERYTHING the load has started: the master timeline plus every
     //    independent tween its callbacks spawned (rock chips, ball flights, …).
     loadTl.kill()
@@ -537,11 +541,20 @@
         grid.classList.remove('loading') // masks no longer needed
         loadLocked = false // the front page is fully visible — allow scrolling
         showSkip = false // nothing left to skip
+        gsap.globalTimeline.timeScale(1) // load is over — everything back to normal speed
       },
     })
     // expose the timeline to the Skip button + show it now that the load is running.
     loadTl = tl
     showSkip = true
+
+    // SPEED-UP: play the whole load 1.35× faster. Set on the GLOBAL timeline (not
+    // this one) because the load spawns many INDEPENDENT tweens from callbacks
+    // (rock chips, ball flights, the sticks' drop, delayedCalls) whose real-time
+    // durations the master timeline's holds are tuned to — scaling only `tl` would
+    // desync them (e.g. the wizard would shoot at sticks that haven't landed yet).
+    // Restored to 1 in onComplete and in skipLoad.
+    gsap.globalTimeline.timeScale(1.35)
 
     // 1) the ball drops from off-screen top to the centre
     tl.to(dividerEl, { y: 0, duration: 0.8, ease: 'power2.in' })
@@ -582,16 +595,16 @@
       //     axis (mirror, scaleX -1) and back. Using svgOrigin (viewBox coords =
       //     head centre) makes it flip exactly in place — no drift off the body.
       if (headGroup) {
-        tl.to(headGroup, { scaleX: -1, svgOrigin: '50 26', duration: 0.5, ease: 'power2.inOut' }, '+=0.2')
-        tl.to(headGroup, { scaleX: 1, svgOrigin: '50 26', duration: 0.5, ease: 'power2.inOut' }, '+=0.3')
+        tl.to(headGroup, { scaleX: -1, svgOrigin: '50 26', duration: 0.5, ease: 'power2.inOut' }, '+=0.1')
+        tl.to(headGroup, { scaleX: 1, svgOrigin: '50 26', duration: 0.5, ease: 'power2.inOut' }, '+=0.15')
       }
 
       // 6c) PULL OUT THE WAND + POINT UP: the right arm raises about the shoulder
       //     (svgOrigin at 54,46) so the hand swings up; the wand fades in as it's
       //     drawn, ending pointing upward.
       if (rightArm && wand) {
-        // wait 0.7s after the look-back before drawing the wand
-        tl.to(wand, { autoAlpha: 1, duration: 0.2 }, '+=0.7')
+        // a short beat after the look-back before drawing the wand
+        tl.to(wand, { autoAlpha: 1, duration: 0.2 }, '+=0.3')
         // -100° points the arm + wand toward the page's top-right corner
         tl.to(rightArm, { rotation: -100, svgOrigin: '54 46', duration: 0.6, ease: 'back.out(1.6)' }, '<')
       }
@@ -701,21 +714,21 @@
                     gsap.set(projectileEl!, { opacity: 0 })
                   },
                 })
-                // …then, 0.8s after the hit, the sticks start falling.
-                gsap.delayedCall(0.8, () => dropSticks?.())
+                // …then, 0.5s after the hit, the sticks start falling.
+                gsap.delayedCall(0.5, () => dropSticks?.())
               },
             })
           }
         }, '+=0.1')
-        // hold while the ball flies up + hits (0.55s), the 0.8s delay, the pre-fall
+        // hold while the ball flies up + hits (0.55s), the 0.5s delay, the pre-fall
         // shake (0.6s), and the sticks fall (~1.0s).
-        tl.to({}, { duration: 3.0 })
+        tl.to({}, { duration: 2.7 })
       }
 
       // 6f) AIM at the sticks: lower the wand back toward its resting angle so it
       //     points DOWN-RIGHT (south-east) at the bottom-right sticks.
       if (rightArm) {
-        tl.to(rightArm, { rotation: -32, svgOrigin: '54 46', duration: 0.4, ease: 'power2.inOut' }, '+=0.2')
+        tl.to(rightArm, { rotation: -32, svgOrigin: '54 46', duration: 0.4, ease: 'power2.inOut' }, '+=0.1')
       }
 
       // 6g) SECOND SHOT: the wizard shoots 3 balls from the wand; each flies onto
@@ -746,70 +759,37 @@
               },
             })
           })
-        }, '+=0.3')
+        }, '+=0.15')
         // hold the timeline while all 3 balls fire (0.5s apart) + land
-        tl.to({}, { duration: 1.7 })
+        tl.to({}, { duration: 1.6 })
       }
 
-      // 6h) DRAG IN THE TOP BAR. Beats: put the (right-hand) wand away → look
-      //     left → pause → the wand appears in the LEFT hand and that hand goes
-      //     UP → magically pull the top pill DOWN from off-screen into place.
-      const leftArm = characterEl?.querySelector('.ch-leftarm') as SVGElement | null
-      const wandLeft = characterEl?.querySelector('.ch-wand-left') as SVGElement | null
-      if (leftArm && wandLeft && headGroup && topBarEl) {
-        // 1) put the wand away: lower the right arm to rest + hide the wand
-        if (rightArm) tl.to(rightArm, { rotation: 0, svgOrigin: '54 46', duration: 0.35, ease: 'power2.inOut' }, '+=0.3')
+      // 6h) THE TOP BAR FALLS IN. (The old corner-by-corner pull sequence was ~6s;
+      //     per the speed-up the bar now DROPS into its seat with a small rebound.)
+      //     Beats: put the right-hand wand away → look up-left → the wizard raises
+      //     his LEFT wand and POINTS UP to summon the bar → the bar falls on that cue.
+      const leftArmTop = characterEl?.querySelector('.ch-leftarm') as SVGElement | null
+      const wandLeftTop = characterEl?.querySelector('.ch-wand-left') as SVGElement | null
+      if (headGroup && topBarEl) {
+        // 1) put the (right-hand) wand away: lower the right arm to rest + hide it
+        if (rightArm) tl.to(rightArm, { rotation: 0, svgOrigin: '54 46', duration: 0.35, ease: 'power2.inOut' }, '+=0.15')
         if (wand) tl.set(wand, { autoAlpha: 0 })
-        // 2) look left
-        tl.to(headGroup, { scaleX: -1, svgOrigin: '50 26', duration: 0.4, ease: 'power2.inOut' }, '+=0.15')
-        // 3) pause
-        tl.to({}, { duration: 0.5 })
-        // 4) the wand appears in the LEFT hand and the hand goes UP on the LEFT
-        //    side of the body (~15° left of straight up) to "hook" the pill.
-        tl.set(wandLeft, { autoAlpha: 1 })
-        tl.to(leftArm, { rotation: 125, svgOrigin: '46 46', duration: 0.5, ease: 'power2.out' })
-
-        // 5) PULL THE BAR DOWN ONE CORNER AT A TIME. The wizard yanks the LEFT
-        //    corner lower, then the RIGHT, then LEFT, then RIGHT, walking the
-        //    bar down from off-screen — so the bar rocks/tilts as it descends.
-        //    Each yank is a quick jerk, followed by a SHAKE, then a 0.7s pause
-        //    before the next pull. The tilt + dip shrink toward 0 so the bar
-        //    arrives level and seated.
-        //
-        //    The bar ROCKS about its own CENTRE (a single fixed origin): a
-        //    NEGATIVE tilt dips the LEFT side, a POSITIVE tilt dips the RIGHT.
-        //    Keeping ONE origin the whole time is what stops the bar snapping
-        //    off-screen — swapping transformOrigin mid-rotation makes GSAP
-        //    re-pivot instantly and fling the (still-rotated) bar away.
-        const bar = topBarEl // captured non-undefined for the closure below
-        gsap.set(bar, { transformOrigin: '50% 50%' }) // fixed centre pivot for all pulls
-        // [side, tilt°, y after this pull]
-        const pulls: [string, number, number][] = [
-          ['left', -16, -110],
-          ['right', 12, -64],
-          ['left', -7, -26],
-          ['right', 0, 0],
-        ]
-        pulls.forEach(([, tilt, y], idx) => {
-          // a small wand FLICK toward the corner being pulled, in sync with the jerk
-          tl.addLabel(`pull${idx}`, idx === 0 ? '>' : '+=0.7') // 0.7s break between pulls
-          tl.to(leftArm, { rotation: 134, svgOrigin: '46 46', duration: 0.14, ease: 'power2.out' }, `pull${idx}`)
-          tl.to(leftArm, { rotation: 125, svgOrigin: '46 46', duration: 0.3, ease: 'power2.out' }, '>')
-          // the JERK: this corner is yanked down fast (accelerating, like a string pull)
-          tl.to(
-            bar,
-            { y, rotation: tilt, duration: 0.32, ease: 'power3.in' },
-            `pull${idx}`,
-          )
-          // the SHAKE: the bar judders about the new position after the jerk lands
-          tl.to(
-            bar,
-            { rotation: tilt + (tilt <= 0 ? 4 : -4), duration: 0.06, ease: 'sine.inOut', yoyo: true, repeat: 3 },
-            '>',
-          )
-          // settle the shake back to the clean tilt for this step
-          tl.to(bar, { rotation: tilt, duration: 0.1, ease: 'power1.out' }, '>')
-        })
+        // 2) look up-left toward where the bar will drop from
+        tl.to(headGroup, { scaleX: -1, svgOrigin: '50 26', duration: 0.4, ease: 'power2.inOut' }, '+=0.1')
+        // 3) RAISE the left wand and POINT UP — the summon gesture. The bar falls
+        //    ON this cue (starts as the point completes), so the fall reads as the
+        //    RESULT of the wizard's gesture, not an unrelated drop.
+        if (leftArmTop && wandLeftTop) {
+          tl.set(wandLeftTop, { autoAlpha: 1 })
+          tl.to(leftArmTop, { rotation: 125, svgOrigin: '46 46', duration: 0.45, ease: 'back.out(1.4)' }, '+=0.1')
+        }
+        // 4) the bar DROPS on the summon: gravity fall, a small rebound, settle.
+        const bar = topBarEl
+        tl.to(bar, { y: 0, duration: 0.5, ease: 'power2.in' }, leftArmTop ? '>-0.1' : '+=0.15')
+        tl.to(bar, { y: -12, duration: 0.14, ease: 'sine.out' })
+        tl.to(bar, { y: 0, duration: 0.22, ease: 'bounce.out' })
+        // 5) lower the wand hand back to rest once the bar is seated.
+        if (leftArmTop) tl.to(leftArmTop, { rotation: 0, svgOrigin: '46 46', duration: 0.35, ease: 'power2.inOut' })
       }
 
       // 6i) DRAG IN THE LEFT WALL. The wizard turns his wand to point STRAIGHT
@@ -828,7 +808,7 @@
         // 1) swing the (left-hand) wand from "up" round to point STRAIGHT LEFT
         if (lArm && lWand) {
           tl.set(lWand, { autoAlpha: 1 })
-          tl.to(lArm, { rotation: 59, svgOrigin: '46 46', duration: 0.5, ease: 'power2.inOut' }, '+=0.3')
+          tl.to(lArm, { rotation: 59, svgOrigin: '46 46', duration: 0.5, ease: 'power2.inOut' }, '+=0.15')
         }
 
         // 2) HAUL the wall in. A heavy, grinding pull (slow start, easing to a
@@ -891,30 +871,28 @@
         // hold the timeline while the wall finishes dragging in
         tl.to({}, { duration: 1.6 }, 'wallDrag')
 
-        // 6j) THE WIZARD LOWERS THE WAND, then LEVITATES some fallen balls up to
-        //     ASSEMBLE the "+" mark (which then spins forever).
+        // 6j) ASSEMBLE THE "+" AND THE 3 DOTS TOGETHER. (Previously two separate
+        //     beats — one hand-rise for the "+", lower, point back, another rise for
+        //     the dots. Per the speed-up both marks are levitated in the SAME rise:
+        //     one hand lift, 8 balls fly at once — 5 into the cross, 3 into the
+        //     dot-stack under it.)
         if (lArm && plusEl) {
-          // 0.5s after the wall is built + the last ball has fallen: lower the
-          // left hand to rest BUT keep the wand in it (don't hide the wand).
-          tl.to(lArm, { rotation: 0, svgOrigin: '46 46', duration: 0.4, ease: 'power2.inOut' }, '+=0.5')
-          // pause 0.9s, then nudge the hand 20° to the LEFT (toward the wall)…
-          tl.to(lArm, { rotation: 20, svgOrigin: '46 46', duration: 0.4, ease: 'power2.out' }, '+=0.9')
-          // …brief 0.5s pause, then the magic takes hold: 5 balls levitate up and
-          //   fly (slowly, ~1s) into the SHAPE of a "+" (a centre ball + 4 arm
-          //   balls). The balls THEMSELVES are the "+": they hold the cross and
-          //   then spin together as one rigid mark (the solid SVG "+" is never
-          //   shown — the dots stay formed in the cross).
-          tl.addLabel('plusRise', '+=0.5')
-          // the wand HAND RISES with the balls (it leads the rise — they trace it),
-          // up HIGH since the "+" sits near the top-left of the screen.
-          tl.to(lArm, { rotation: 120, svgOrigin: '46 46', duration: 1.0, ease: 'power2.inOut' }, 'plusRise')
+          // lower the hand to rest (wand stays in it), a short beat, then a 20°
+          // nudge toward the rubble…
+          tl.to(lArm, { rotation: 0, svgOrigin: '46 46', duration: 0.4, ease: 'power2.inOut' }, '+=0.2')
+          tl.to(lArm, { rotation: 20, svgOrigin: '46 46', duration: 0.4, ease: 'power2.out' }, '+=0.3')
+          // …then the magic takes hold: the hand rises HIGH and ALL EIGHT balls
+          // float up together — 5 into the "+" (which then spins forever) and 3
+          // into the dot-stack beneath it.
+          tl.addLabel('marksRise', '+=0.2')
+          tl.to(lArm, { rotation: 120, svgOrigin: '46 46', duration: 1.0, ease: 'power2.inOut' }, 'marksRise')
           tl.add(() => {
+            // the "+": 5 balls into a cross (centre, up, down, left, right)
             const target = plusEl!.getBoundingClientRect()
             const tx = target.left + target.width / 2
             const ty = target.top + target.height / 2
             const ARM = 12 // distance of each arm ball from the centre (px)
             const C = 4.5 // half the 9px ball (its own centre)
-            // 5 ball slots that read as a "+": centre, up, down, left, right.
             const slots = [
               [0, 0],
               [0, -ARM],
@@ -925,9 +903,8 @@
             const chosen = fallenRocks.slice(0, slots.length)
             chosen.forEach((r, i) => {
               const [ox, oy] = slots[i]
-              // each ball floats up to its slot in the cross (slow, floaty)
               gsap.to(r.el, {
-                x: tx - C + ox, // centre the 9px ball, then offset to its arm
+                x: tx - C + ox,
                 y: ty - C + oy,
                 duration: 1.0,
                 delay: i * 0.06,
@@ -942,65 +919,41 @@
                     : undefined,
               })
             })
-          }, 'plusRise')
-          // hold while the balls float up and form the cross, then lower the hand
-          tl.to({}, { duration: 1.0 })
-          tl.to(lArm, { rotation: 0, svgOrigin: '46 46', duration: 0.4, ease: 'power2.inOut' })
-
-          // 6k) ASSEMBLE THE 3 DOTS under the "+". The wizard points the wand back
-          //     at the rubble (quickly, like his snappy pacing after the sticks),
-          //     then picks 3 more balls and lifts them into the dot-stack. His wand
-          //     HAND RISES in sync with the balls — they trace the path he traces.
-          if (topDotsEl) {
-            const dotsGroup = topDotsEl
-            // point the wand back at the rubble (no long pause — keep it snappy)
-            tl.to(lArm, { rotation: 59, svgOrigin: '46 46', duration: 0.45, ease: 'power2.inOut' }, '+=0.15')
-
-            // pick 3 leftover balls and float them up to the 3 dot slots, while
-            // the wand hand RISES with them (it leads the rise — they trace it).
-            tl.addLabel('dotsRise')
-            // the hand lifts up over the same ~1s the balls travel up
-            tl.to(lArm, { rotation: 120, svgOrigin: '46 46', duration: 1.0, ease: 'power2.inOut' }, 'dotsRise')
-            tl.add(() => {
-              const dotEls = Array.from(dotsGroup.querySelectorAll('.dot')) as HTMLElement[]
-              // use 3 balls that weren't consumed by the "+"
+            // the 3 dots under the "+": rise in the SAME breath
+            if (topDotsEl) {
+              const dotEls = Array.from(topDotsEl.querySelectorAll('.dot')) as HTMLElement[]
               const picks = fallenRocks.slice(5, 8)
               dotEls.forEach((dotEl, i) => {
                 const r = dotEl.getBoundingClientRect()
                 const ball = picks[i]?.el
                 if (!ball) return
                 gsap.to(ball, {
-                  x: r.left + r.width / 2 - 4.5, // centre the 9px ball on the dot slot
+                  x: r.left + r.width / 2 - 4.5,
                   y: r.top + r.height / 2 - 4.5,
-                  duration: 1.0, // same ~1s as the hand rise → they trace the hand
+                  duration: 1.0,
                   delay: i * 0.08,
                   ease: 'power2.inOut',
                 })
               })
-            }, 'dotsRise')
-            // hold while the dots rise into place, then drop the hand to rest
-            tl.to({}, { duration: 0.85 })
-            tl.to(lArm, { rotation: 0, svgOrigin: '46 46', duration: 0.4, ease: 'power2.inOut' })
-          }
+            }
+          }, 'marksRise')
+          // hold while all 8 balls float into place (hand stays up — the cradle
+          // beat follows IMMEDIATELY, no lower/re-raise between).
+          tl.to({}, { duration: 1.0 })
 
-          // 6l) FINALE — the bottom-left 4 dots. The wizard lowers the wand at the
-          //     last of the rubble, lifts the FINAL 4 balls into a vertical line
-          //     (the bottom-left dot stack), pauses 0.7s, makes a SMALL circular
-          //     wand flourish that lifts the top ball — then a perpetual NEWTON'S-
+          // 6l) FINALE — the bottom-left 4 dots, IMMEDIATELY after the "+"/dots (no
+          //     waiting/lower/re-raise, per the speed-up). The hand sweeps straight
+          //     from its raised 120° down to the low 30° cradle-lift as the FINAL 4
+          //     balls rise into the vertical dot stack — then the perpetual NEWTON'S-
           //     CRADLE loop starts. After the first cycle the wizard puts the wand
           //     away, looks around, and walks BACK INTO the line, disappearing.
           if (bottomDotsEl) {
             const dotsGroup = bottomDotsEl
             const lWandFinale = characterEl?.querySelector('.ch-wand-left') as SVGElement | null
 
-            // START from the SAME hand-down rest pose as right after the wall was
-            // built (rotation 0). A small "ready" raise of the wand/hand by 20°…
-            tl.to(lArm, { rotation: 0, svgOrigin: '46 46', duration: 0.4, ease: 'power2.inOut' }, '+=0.1')
-            tl.to(lArm, { rotation: 20, svgOrigin: '46 46', duration: 0.35, ease: 'power2.out' }, '+=0.15') // ready-raise
-            // …then lift the hand a little more (to 30°) as the last 4 balls rise
-            // into the bottom-left dot stack (a small, low lift).
+            // the hand sweeps 120° → 30° (the low cradle lift) while the balls rise.
             tl.addLabel('cradleRise')
-            tl.to(lArm, { rotation: 30, svgOrigin: '46 46', duration: 0.8, ease: 'power2.inOut' }, 'cradleRise') // 30° lift
+            tl.to(lArm, { rotation: 30, svgOrigin: '46 46', duration: 0.8, ease: 'power2.inOut' }, 'cradleRise') // sweep down to the 30° lift
             // capture the 4 cradle balls (top → bottom) + their TRUE rest positions
             const cradle: HTMLElement[] = []
             const cradleRest: number[] = []
@@ -1056,13 +1009,13 @@
             if (headGroup) {
               // the wand bob above already covered ~one cradle cycle; a short
               // extra beat, then the wizard leaves (cradle keeps running forever).
-              tl.to({}, { duration: 0.4 })
+              tl.to({}, { duration: 0.2 })
               // lower the left hand + hide the wand
               tl.to(lArm, { rotation: 0, svgOrigin: '46 46', duration: 0.4, ease: 'power2.inOut' })
               if (lWandFinale) tl.set(lWandFinale, { autoAlpha: 0 })
               // look RIGHT (face forward/right), pause, then look LEFT toward the line
-              tl.to(headGroup, { scaleX: 1, svgOrigin: '50 26', duration: 0.4, ease: 'power2.inOut' }, '+=0.15')
-              tl.to(headGroup, { scaleX: -1, svgOrigin: '50 26', duration: 0.4, ease: 'power2.inOut' }, '+=0.3')
+              tl.to(headGroup, { scaleX: 1, svgOrigin: '50 26', duration: 0.4, ease: 'power2.inOut' }, '+=0.1')
+              tl.to(headGroup, { scaleX: -1, svgOrigin: '50 26', duration: 0.4, ease: 'power2.inOut' }, '+=0.15')
               // re-enable the line clip so he's hidden as he steps back behind it
               tl.add(() => characterClipEl?.classList.add('clipping'))
               // RETREAT the SAME WAY HE ENTERED: walk left back to the line and on
@@ -1089,6 +1042,7 @@
     // 6) tagline (right-side text) slides in 0.57s AFTER the Welcome text starts.
     const taglineStart = WELCOME_LEADS ? 'welcomeIn+=0.57' : '<'
     tl.to(tagline, { x: 0, duration: 1.0, ease: 'power3.out' }, taglineStart)
+
   }
 </script>
 
