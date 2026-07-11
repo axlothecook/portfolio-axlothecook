@@ -5,7 +5,7 @@ A personal portfolio website I made.
 <ul>
    <li>Static - shows data that doesn't change over time</li>
    <li>No-backed - static, defined data with no CRUD functionality does not require a server or database</li>
-   <li>Single page slide-based - simpler than multi-page for the small amount of data it shows</li>
+   <li>Single page slide-based - simpler than multi-page for the small amount of data it contains</li>
 </ul>
 
 ## Features
