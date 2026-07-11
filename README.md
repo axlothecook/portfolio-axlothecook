@@ -9,9 +9,11 @@ A personal portfolio website I made.
 </ul>
 
 ## Features
-Dark mode toggle <br />
-Loading animation <br />
-Skip button for animations <br />
+<ul>
+   <li>Dark mode toggle</li>
+   <li>Loading animation</li>
+   <li>Skip button for animations</li>
+</ul>
 
 ## Design
 [Figma](https://www.figma.com/design/Yc4OGKSCCefIzgg2P9tXu6/Portfolio-Website?node-id=3-73&t=ALfNXldsPVyxVNo5-0) <br />
