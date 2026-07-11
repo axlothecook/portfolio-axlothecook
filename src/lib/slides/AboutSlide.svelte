@@ -78,14 +78,19 @@
   .pin {
     // Sized to the row's line-box (text is 1.4rem, line-height ~1.4 → ~2rem tall), so
     // the 1.5rem pin FITS inside the row and doesn't stretch it taller than the text
-    // rows below. That's what keeps it aligned: an over-tall pin (1.7rem) overflowed
-    // the 1.4rem line and its centre sagged below the text. The glyph is centred in
-    // its own viewBox, so align-items:center on the row lines it up with the text.
+    // rows below (an over-tall 1.7rem pin overflowed the line and its centre sagged).
     width: 1.5rem;
     height: 1.5rem;
     margin-right: 0.4rem;
     color: var(--color-ink);
     flex: 0 0 auto;
+    // OPTICAL nudge: the pin's visual weight is its round HEAD at the top (the tail
+    // points down), so a geometrically-centred pin READS as sitting high. A small
+    // downward shift drops the head onto the text's optical middle. `top` (relative)
+    // moves only the glyph, not the row height, so the alignment with the rows below
+    // is preserved. ~0.12em ≈ 2.7px at 1.4rem text.
+    position: relative;
+    top: 0.12em;
   }
 
   // Socials row: label + linked icons.
