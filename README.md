@@ -46,7 +46,7 @@ npm run check    # svelte-check + tsc type checking
 
 ## Demo photos
 ### Dark mode landing page
-![image](https://github.com/user-attachments/assets/2bb7e871-936e-4982-9ed1-4dd3b73e106b)
+![image](https://github.com/user-attachments/assets/871f3c3d-6499-4b35-98df-29ec81afff33)
 
 ### Light mode landing page
-![image](https://github.com/user-attachments/assets/c66820b7-00ee-4327-8eb3-ae91da26cb3c)
+![image](https://github.com/user-attachments/assets/55222f5e-6b26-4dbb-a210-f93450e09f20)
