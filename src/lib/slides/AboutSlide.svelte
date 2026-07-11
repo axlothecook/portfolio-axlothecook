@@ -7,7 +7,7 @@
 
 <Slide title="About me">
   <ul class="list">
-    <li>
+    <li class="location">
       <svg class="pin" viewBox="0 0 24 24" aria-hidden="true"><use href="#icon-location" /></svg>
       {about.location}
     </li>
@@ -57,9 +57,12 @@
     li {
       justify-content: flex-start;
     }
-    .pin {
-      width: 1.1rem;
-      height: 1.1rem;
+    // .list .pin (2 classes) so it OUT-SPECIFIES the base `.pin` rule, which appears
+    // later in the source and would otherwise win even inside this media query.
+    // Sized to the smaller mobile text (1rem) so it stays proportional + aligned.
+    .list .pin {
+      width: 1.3rem;
+      height: 1.3rem;
     }
     .social :global(svg) {
       width: 1.2rem;
@@ -73,6 +76,11 @@
   }
 
   .pin {
+    // Sized to the row's line-box (text is 1.4rem, line-height ~1.4 → ~2rem tall), so
+    // the 1.5rem pin FITS inside the row and doesn't stretch it taller than the text
+    // rows below. That's what keeps it aligned: an over-tall pin (1.7rem) overflowed
+    // the 1.4rem line and its centre sagged below the text. The glyph is centred in
+    // its own viewBox, so align-items:center on the row lines it up with the text.
     width: 1.5rem;
     height: 1.5rem;
     margin-right: 0.4rem;
