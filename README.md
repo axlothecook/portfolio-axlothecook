@@ -18,15 +18,11 @@ Skip button for animations <br />
 A fuller written spec (slide content, fixed shell, animations, colours) lives in [`docs/design-spec.md`](docs/design-spec.md) within the repo.
 
 ## Tools used 
-<ul>
-   <li>Framework: [Svelte 5](https://svelte.dev)</li>
-   <li>Bundler: [Vite 8](https://vite.dev)</li>
-</ul>
-Framework: [Svelte 5](https://svelte.dev)
-Bundler: [Vite 8](https://vite.dev)
-Language: [TypeScript](https://www.typescriptlang.org)
-Styling: [my own sass library](https://github.com/axlothecook/axlothecook-sass-library)
-Deployment: [Cloudflare](https://www.cloudflare.com) Pages via a subdomain `axlothecook.com`
+Framework: [Svelte 5](https://svelte.dev)  <br />
+Bundler: [Vite 8](https://vite.dev)  <br />
+Language: [TypeScript](https://www.typescriptlang.org)  <br />
+Styling: [my own sass library](https://github.com/axlothecook/axlothecook-sass-library)  <br />
+Deployment: [Cloudflare](https://www.cloudflare.com) Pages via a subdomain `axlothecook.com`  <br />
 3D (later): [Three.js](https://threejs.org)
 
 ## Getting started
