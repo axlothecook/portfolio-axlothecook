@@ -18,6 +18,10 @@ Skip button for animations <br />
 A fuller written spec (slide content, fixed shell, animations, colours) lives in [`docs/design-spec.md`](docs/design-spec.md) within the repo.
 
 ## Tools used 
+<ul>
+   <li>Framework: [Svelte 5](https://svelte.dev)</li>
+   <li>Bundler: [Vite 8](https://vite.dev)</li>
+</ul>
 Framework: [Svelte 5](https://svelte.dev)
 Bundler: [Vite 8](https://vite.dev)
 Language: [TypeScript](https://www.typescriptlang.org)
