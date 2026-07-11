@@ -9,9 +9,9 @@ A personal portfolio website I made.
 </ul>
 
 ## Features
-Dark mode toggle 
-Loading animation
-Skip button for animations
+Dark mode toggle <br />
+Loading animation <br />
+Skip button for animations <br />
 
 ## Future updates
 Animated section with Three.js showcasing my best projects
