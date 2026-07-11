@@ -84,13 +84,18 @@
     margin-right: 0.4rem;
     color: var(--color-ink);
     flex: 0 0 auto;
-    // OPTICAL nudge: the pin's visual weight is its round HEAD at the top (the tail
-    // points down), so a geometrically-centred pin READS as sitting high. A small
-    // downward shift drops the head onto the text's optical middle. `top` (relative)
-    // moves only the glyph, not the row height, so the alignment with the rows below
-    // is preserved. ~0.12em ≈ 2.7px at 1.4rem text.
+    // OPTICAL nudges (the SVG box is aligned; the ART inside it isn't):
+    // - vertical: the pin's visual weight is its round HEAD at the top (tail points
+    //   down), so a geometrically-centred pin READS high → drop it 0.12em.
+    // - horizontal: the glyph has ~4.5/24 (18.75%) empty viewBox space on its left,
+    //   so the visible art started RIGHT of the text line below (Contact/…). Shift
+    //   the pin left by that inset (translateX % = of its own box → scales with any
+    //   pin size) so the VISIBLE glyph starts on the same vertical line as the text.
+    // Neither nudge affects layout (transform/relative-top), so the row's height and
+    // the text-start line of the rows below are untouched.
     position: relative;
     top: 0.12em;
+    transform: translateX(-18.75%);
   }
 
   // Socials row: label + linked icons.
