@@ -14,7 +14,7 @@ Loading animation <br />
 Skip button for animations <br />
 
 ## Design
-[Figma](https://www.figma.com/design/Yc4OGKSCCefIzgg2P9tXu6/Portfolio-Website?node-id=3-73&t=ALfNXldsPVyxVNo5-0)
+[Figma](https://www.figma.com/design/Yc4OGKSCCefIzgg2P9tXu6/Portfolio-Website?node-id=3-73&t=ALfNXldsPVyxVNo5-0) <br />
 A fuller written spec (slide content, fixed shell, animations, colours) lives in [`docs/design-spec.md`](docs/design-spec.md) within the repo.
 
 ## Tools used 
