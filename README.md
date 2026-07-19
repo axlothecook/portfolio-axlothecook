@@ -4,7 +4,7 @@ A personal portfolio website I made.
 ## Design choices
 <ul>
    <li>Static - shows data that doesn't change over time</li>
-   <li>No-backed - static, defined data with no CRUD functionality does not require a server or database</li>
+   <li>No-backend - static, defined data with no CRUD functionality does not require a server or database</li>
    <li>Single page slide-based - simpler than multi-page for the small amount of data it contains</li>
 </ul>
 
@@ -13,6 +13,7 @@ A personal portfolio website I made.
    <li>Dark mode toggle</li>
    <li>Loading animation</li>
    <li>Skip button for animations</li>
+   <li>Fully responsive, with a dedicated mobile pass across every page</li>
 </ul>
 
 ## Design
@@ -24,8 +25,7 @@ Framework: [Svelte 5](https://svelte.dev)  <br />
 Bundler: [Vite 8](https://vite.dev)  <br />
 Language: [TypeScript](https://www.typescriptlang.org)  <br />
 Styling: [my own sass library](https://github.com/axlothecook/axlothecook-sass-library)  <br />
-Deployment: [Cloudflare](https://www.cloudflare.com) Pages via a subdomain `axlothecook.com`  <br />
-3D (later): [Three.js](https://threejs.org)
+Deployment: [Cloudflare](https://www.cloudflare.com) Pages via a subdomain `portfolio.axlothecook.com`  <br />
 
 ## Future updates
 <ul>
