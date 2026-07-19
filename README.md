@@ -27,18 +27,6 @@ Styling: [my own sass library](https://github.com/axlothecook/axlothecook-sass-l
 Deployment: [Cloudflare](https://www.cloudflare.com) Pages via a subdomain `axlothecook.com`  <br />
 3D (later): [Three.js](https://threejs.org)
 
-## Getting started
-1) download the repo via git clone
-2) in terminal, type following commands:
-```bash
-npm install
-npm run dev      # start the dev server
-npm run build    # production build to dist/
-npm run preview  # preview the production build
-npm run check    # svelte-check + tsc type checking
-```
-3) view live via localhost link from the terminal
-
 ## Future updates
 <ul>
    <li>Animated section with Three.js showcasing my best projects</li>
